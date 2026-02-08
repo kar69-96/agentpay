@@ -1,0 +1,19 @@
+{
+  "name": "@agentpay/example-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/agent.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "echo 'No build needed'",
+    "test": "echo 'No tests'"
+  },
+  "dependencies": {
+    "agentpay": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}
