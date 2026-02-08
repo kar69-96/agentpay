@@ -1,10 +1,11 @@
 # AgentPay
 
-> Secure payments infrastructure for AI agents. Open source.
+> Secure payments infrastructure for AI agents.
+
 
 AgentPay lets AI agents purchase things on the web without ever seeing a user's credit card. Credentials are encrypted locally, purchases require human approval with cryptographic signatures, and checkout happens via headless browser with placeholder injection — real values exist in the DOM for milliseconds.
 
-No servers. No databases. Everything runs on the user's machine.
+Everything runs on the user's machine except for CUA running on Browserbase.
 
 ## Install
 
