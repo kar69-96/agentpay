@@ -7,7 +7,7 @@ agentpay/
 │
 ├── packages/
 │   │
-│   ├── sdk/                              # @agentpay/sdk — core SDK + CLI
+│   ├── sdk/                              # @useagentpay/sdk — core SDK + CLI
 │   │   ├── package.json
 │   │   ├── tsup.config.ts                # Build config (CJS + ESM)
 │   │   ├── vitest.config.ts
@@ -61,7 +61,7 @@ agentpay/
 │   │           ├── ids.ts                # Transaction ID generation
 │   │           └── display.ts            # CLI output formatting
 │   │
-│   └── web/                              # @agentpay/web — Next.js setup page
+│   └── web/                              # @useagentpay/web — Next.js setup page
 │       ├── package.json
 │       ├── next.config.ts
 │       ├── tailwind.config.ts

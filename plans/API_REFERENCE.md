@@ -7,7 +7,7 @@
 Initialize the AgentPay client.
 
 ```typescript
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 
 const ap = new AgentPay({
   home: '~/.agentpay',  // optional, defaults to ~/.agentpay

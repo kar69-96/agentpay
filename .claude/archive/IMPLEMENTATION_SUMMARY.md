@@ -13,7 +13,7 @@ The entire codebase was built from scratch (the repo previously contained only d
 ### Monorepo Structure
 
 ```
-packages/sdk/          → Core SDK, published as `agentpay` on npm
+packages/sdk/          → Core SDK, published as `@useagentpay/sdk` on npm
 packages/web/          → Next.js setup page (client-side encryption)
 examples/basic/        → Minimal propose → approve → execute workflow
 examples/mcp/          → MCP tool definitions for AI agent integration
@@ -83,7 +83,7 @@ Agent calls ap.transactions.execute(txId)
 ### SDK API (for agents)
 
 ```typescript
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 
 const ap = new AgentPay({ passphrase: '...' });
 

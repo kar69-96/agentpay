@@ -19,7 +19,7 @@ pnpm dev          # Dev mode with watch
 
 ## Project Structure
 
-- `packages/sdk/` - Core SDK (published as `agentpay` on npm)
+- `packages/sdk/` - Core SDK (published as `@useagentpay/sdk` on npm)
 - `packages/web/` - Next.js setup page
 - `examples/basic/` - Minimal agent example
 - `examples/mcp/` - MCP tool definition example

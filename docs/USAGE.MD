@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-npm install agentpay
+npm install @useagentpay/sdk
 ```
 
 ## Quick Start
@@ -164,7 +164,7 @@ agentpay reset
 Agents can use the SDK programmatically instead of the CLI.
 
 ```typescript
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 
 const ap = new AgentPay({
   passphrase: 'your-passphrase',

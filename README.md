@@ -10,7 +10,7 @@ Everything runs on the user's machine except for CUA running on Browserbase.
 ## Install
 
 ```bash
-npm install agentpay
+npm install @useagentpay/sdk
 ```
 
 ## Quick Start
@@ -23,7 +23,7 @@ agentpay budget --set 200
 
 **Agent — propose & execute:**
 ```typescript
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 const ap = new AgentPay();
 
 const tx = await ap.transactions.propose({

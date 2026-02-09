@@ -18,7 +18,7 @@
 
 ## Core Dependencies
 
-### SDK (`@agentpay/sdk`)
+### SDK (`@useagentpay/sdk`)
 | Package | Purpose |
 |---|---|
 | `commander` | CLI framework (setup, approve, reject, status) |
@@ -26,7 +26,7 @@
 | `crypto` (Node built-in) | AES-256-GCM encryption, Ed25519 keypair signing |
 | `qrcode` | QR code generation for wallet funding links |
 
-### Web (`@agentpay/web`)
+### Web (`@useagentpay/web`)
 | Package | Purpose |
 |---|---|
 | `next` | React framework for setup/funding page |
@@ -77,8 +77,8 @@ All data stored at `~/.agentpay/`:
 ```
 agentpay/
 ├── packages/
-│   ├── sdk/          # @agentpay/sdk — core SDK + CLI
-│   └── web/          # @agentpay/web — Next.js setup/funding page
+│   ├── sdk/          # @useagentpay/sdk — core SDK + CLI
+│   └── web/          # @useagentpay/web — Next.js setup/funding page
 ├── examples/
 │   ├── basic/        # Minimal agent usage
 │   └── mcp/          # MCP skill integration
