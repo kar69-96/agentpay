@@ -1,6 +1,6 @@
 {
   "name": "@useagentpay/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local-first payments SDK for AI agents",
   "type": "module",
   "exports": {
