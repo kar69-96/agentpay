@@ -61,11 +61,33 @@ agentpay approve tx_a1b2c3   # signs with your local keypair
 - **Recording disabled** — no Browserbase session playback
 - **Open source** — audit the entire security model
 
+## MCP Server
+
+Use AgentPay from any MCP-compatible host (Claude Desktop, Cursor, Claude Code, Windsurf):
+
+```bash
+npx @useagentpay/mcp-server
+```
+
+Or add to your host config:
+```json
+{ "mcpServers": { "agentpay": { "command": "npx", "args": ["@useagentpay/mcp-server"] } } }
+```
+
+8 tools, 3 resources, 3 prompts — covers the full purchase lifecycle. See the [MCP server package](packages/mcp-server/) for details.
+
+## Packages
+
+| Package | Description |
+|---|---|
+| [`@useagentpay/sdk`](https://www.npmjs.com/package/@useagentpay/sdk) | Core SDK + CLI |
+| [`@useagentpay/mcp-server`](https://www.npmjs.com/package/@useagentpay/mcp-server) | MCP server for AI hosts |
+
 ## Docs
 
 | Doc | Description |
 |---|---|
-| [PRD](docs/PRD.md) | Product requirements |
+| [Usage Guide](USAGE.md) | CLI commands + SDK guide |
 | [Architecture](docs/ARCHITECTURE.md) | System design |
 | [Security](docs/SECURITY.md) | Security model deep dive |
 | [User Flow](docs/USER_FLOW.md) | Step-by-step journeys |

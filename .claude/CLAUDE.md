@@ -126,6 +126,13 @@ All state is file-based JSON under `~/.agentpay/` (overridable via `AGENTPAY_HOM
 
 All in `src/errors.ts` with a `code` property: `NotSetupError`, `DecryptError`, `InsufficientBalanceError`, `ExceedsTxLimitError`, `NotApprovedError`, `InvalidMandateError`, `AlreadyExecutedError`, `CheckoutFailedError`, `TimeoutError`.
 
+## Documentation
+
+**Keep docs up to date on every PR.** When making changes that affect user-facing behavior, CLI commands, SDK API, environment variables, or package structure, update the relevant docs:
+- `README.md` — project overview, install, quick start, MCP config
+- `USAGE.md` — CLI commands, SDK usage, MCP server details, env vars
+- `.claude/CLAUDE.md` — build commands, architecture, conventions
+
 ## Release & Publishing
 
 - **Changesets** manages versioning: `pnpm changeset` to create, merged to `main` triggers publish
