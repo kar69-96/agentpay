@@ -5,7 +5,7 @@
  * Register these as tool definitions in your MCP server.
  */
 
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 
 // MCP tool definitions
 export const tools = [

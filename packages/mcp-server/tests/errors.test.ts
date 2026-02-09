@@ -10,7 +10,7 @@ import {
   AlreadyExecutedError,
   CheckoutFailedError,
   TimeoutError,
-} from 'agentpay';
+} from '@useagentpay/sdk';
 
 describe('mapError', () => {
   it('maps NotSetupError', () => {

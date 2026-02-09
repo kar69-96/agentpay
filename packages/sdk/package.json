@@ -1,5 +1,5 @@
 {
-  "name": "agentpay",
+  "name": "@useagentpay/sdk",
   "version": "0.1.0",
   "description": "Local-first payments SDK for AI agents",
   "type": "module",

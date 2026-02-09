@@ -10,7 +10,7 @@
  *   pnpm start
  */
 
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 
 async function main() {
   // Initialize AgentPay (reads from ~/.agentpay/)

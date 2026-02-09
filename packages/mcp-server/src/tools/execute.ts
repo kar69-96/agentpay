@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 import type { ServerConfig } from '../config.js';
 import { getPassphrase } from '../config.js';
 import { mapError } from '../errors.js';

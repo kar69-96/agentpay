@@ -1,5 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { AgentPay } from 'agentpay';
+import { AgentPay } from '@useagentpay/sdk';
 import type { ServerConfig } from './config.js';
 import { registerTools } from './tools/index.js';
 import { registerResources } from './resources/index.js';

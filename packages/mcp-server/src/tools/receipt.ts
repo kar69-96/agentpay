@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { AgentPay } from 'agentpay';
+import type { AgentPay } from '@useagentpay/sdk';
 import { mapError } from '../errors.js';
 
 export function registerReceiptTool(server: McpServer, ap: AgentPay) {

@@ -1,4 +1,4 @@
-import type { ExecutorConfig } from 'agentpay';
+import type { ExecutorConfig } from '@useagentpay/sdk';
 
 export interface ServerConfig {
   home?: string;

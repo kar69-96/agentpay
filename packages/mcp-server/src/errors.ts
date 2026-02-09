@@ -8,7 +8,7 @@ import {
   AlreadyExecutedError,
   CheckoutFailedError,
   TimeoutError,
-} from 'agentpay';
+} from '@useagentpay/sdk';
 
 export interface ToolResult {
   success: boolean;

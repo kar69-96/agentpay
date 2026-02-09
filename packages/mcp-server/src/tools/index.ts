@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { AgentPay } from 'agentpay';
+import type { AgentPay } from '@useagentpay/sdk';
 import type { ServerConfig } from '../config.js';
 import { registerStatusTools } from './status.js';
 import { registerProposeTool } from './propose.js';
