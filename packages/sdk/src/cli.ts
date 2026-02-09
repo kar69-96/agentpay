@@ -108,4 +108,13 @@ program
     await dashboardCommand(options);
   });
 
+program
+  .command('mcp')
+  .description('Start AgentPay MCP server (stdio transport)')
+  .option('--http', 'Use HTTP transport instead of stdio')
+  .action(async (options: { http?: boolean }) => {
+    const { mcpCommand } = await import('./commands/mcp.js');
+    await mcpCommand(options);
+  });
+
 program.parse();

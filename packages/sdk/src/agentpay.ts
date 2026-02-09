@@ -23,7 +23,7 @@ export interface AgentPayOptions {
 }
 
 export class AgentPay {
-  private home: string;
+  public readonly home: string;
   private passphrase?: string;
   private budgetManager: BudgetManager;
   private txManager: TransactionManager;
@@ -145,6 +145,10 @@ export class AgentPay {
         return tx?.receipt;
       },
     };
+  }
+
+  get audit() {
+    return { getLog: () => this.auditLogger.getLog() };
   }
 
   status(): {
