@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@agentpay/web", "@agentpay/example-basic", "@agentpay/example-mcp"]
+  "ignore": ["@useagentpay/web", "@useagentpay/example-basic", "@useagentpay/example-mcp"]
 }
