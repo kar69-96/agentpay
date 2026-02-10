@@ -1,11 +1,9 @@
 # AgentPay
 
 > Secure payments infrastructure for AI agents.
-
-
-AgentPay lets AI agents purchase things on the web without ever seeing a user's credit card. Credentials are encrypted locally, purchases require human approval with cryptographic signatures, and checkout happens via headless browser with placeholder injection — real values exist in the DOM for milliseconds.
-
-Everything runs on the user's machine except for CUA running on Browserbase.
+> 
+A wallet for your AI agent. Let your agent purchase approved items within a budget, giving you back your time. Fully encrypted and local.
+Everything runs on the user's machine except for CUA running on Browserbase (can configure to https://github.com/trycua/cua + playwright using a headless browser).
 
 ## Install
 
