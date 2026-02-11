@@ -16,6 +16,8 @@ export class PurchaseExecutor {
   private provider: BrowserProvider;
   private modelApiKey?: string;
   private stagehand: Stagehand | null = null;
+  private proxyUrl: string | undefined;
+  private originalBaseUrl: string | undefined;
 
   constructor(config?: ExecutorConfig) {
     this.provider = config?.provider ?? new LocalBrowserProvider();

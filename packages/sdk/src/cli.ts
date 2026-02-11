@@ -36,6 +36,18 @@ program
   });
 
 program
+  .command('propose')
+  .description('Propose a purchase (creates a pending transaction)')
+  .requiredOption('--merchant <name>', 'Merchant name')
+  .requiredOption('--amount <amount>', 'Purchase amount in USD')
+  .requiredOption('--description <desc>', 'Purchase description')
+  .requiredOption('--url <url>', 'Product/checkout URL')
+  .action(async (options: { merchant: string; amount: string; description: string; url: string }) => {
+    const { proposeCommand } = await import('./commands/propose.js');
+    proposeCommand(options);
+  });
+
+program
   .command('approve <txId>')
   .description('Approve a pending purchase')
   .action(async (txId: string) => {
@@ -84,19 +96,6 @@ program
   .action(async () => {
     const { resetCommand } = await import('./commands/reset.js');
     await resetCommand();
-  });
-
-program
-  .command('buy')
-  .description('Propose, approve, and execute a purchase')
-  .requiredOption('--merchant <name>', 'Merchant name')
-  .requiredOption('--description <desc>', 'Purchase description')
-  .requiredOption('--url <url>', 'Product/checkout URL')
-  .option('--amount <amount>', 'Purchase amount (auto-detected from page if omitted)')
-  .option('--pickup', 'Select in-store pickup')
-  .action(async (options: { merchant: string; description: string; url: string; amount?: string; pickup?: boolean }) => {
-    const { buyCommand } = await import('./commands/buy.js');
-    await buyCommand(options);
   });
 
 program

@@ -1,4 +1,5 @@
-export const VERSION = '0.1.0';
+declare const __PKG_VERSION__: string;
+export const VERSION = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0';
 
 // Types
 export type { BillingCredentials, EncryptedVault } from './vault/types.js';
@@ -47,6 +48,12 @@ export { AuditLogger } from './audit/logger.js';
 export { PurchaseExecutor } from './executor/executor.js';
 export { LocalBrowserProvider } from './executor/providers/local-provider.js';
 export { PLACEHOLDER_MAP, getPlaceholderVariables, credentialsToSwapMap } from './executor/placeholder.js';
+
+// Approval Server
+export type { ApprovalResult } from './server/approval-server.js';
+
+// Setup Server
+export type { SetupResult } from './server/setup-server.js';
 
 // AgentPay
 export { AgentPay } from './agentpay.js';

@@ -5,10 +5,12 @@ import { registerTools } from './tools/index.js';
 import { registerResources } from './resources/index.js';
 import { registerPrompts } from './prompts/index.js';
 
+declare const __PKG_VERSION__: string;
+
 export function createServer(config: ServerConfig): McpServer {
   const server = new McpServer({
     name: 'agentpay',
-    version: '0.1.0',
+    version: typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0',
   });
 
   // Shared AgentPay instance (no passphrase — read-only by default)

@@ -103,13 +103,7 @@ Or add to your host config:
 
 | Doc | Description |
 |---|---|
-| [Usage Guide](USAGE.md) | CLI commands + SDK guide |
-| [Architecture](docs/ARCHITECTURE.md) | System design |
-| [Security](docs/SECURITY.md) | Security model deep dive |
-| [User Flow](docs/USER_FLOW.md) | Step-by-step journeys |
-| [API Reference](docs/API_REFERENCE.md) | SDK + CLI reference |
-| [Tech Stack](docs/TECH_STACK.md) | Technology choices |
-| [File Structure](docs/FILE_STRUCTURE.md) | Repo organization |
+| [Usage Guide](USAGE.md) | CLI commands, SDK usage, MCP server details |
 
 
 ## License

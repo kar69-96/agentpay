@@ -1,4 +1,6 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { fileURLToPath } from 'node:url';
+import { realpathSync } from 'node:fs';
 import { createServer } from './server.js';
 import { loadConfig } from './config.js';
 
@@ -48,11 +50,14 @@ export async function startServer(overrides?: { http?: boolean }) {
   }
 }
 
-// Auto-start when run directly
-const isDirectRun =
-  process.argv[1] &&
-  (process.argv[1].endsWith('/mcp-server/dist/index.js') ||
-    process.argv[1].endsWith('/mcp-server/src/index.ts'));
+// Auto-start when run directly (handles npx, global install, and symlinks)
+let isDirectRun = false;
+try {
+  const thisFile = fileURLToPath(import.meta.url);
+  isDirectRun = !!process.argv[1] && realpathSync(process.argv[1]) === thisFile;
+} catch {
+  // process.argv[1] doesn't exist or can't be resolved
+}
 
 if (isDirectRun) {
   const httpFlag = process.argv.includes('--http');

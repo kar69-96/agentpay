@@ -11,4 +11,5 @@ export interface ExecutorConfig {
   provider?: BrowserProvider;
   /** LLM API key for Stagehand's AI-driven navigation (e.g. ANTHROPIC_API_KEY). */
   modelApiKey?: string;
+  proxyUrl?: string;
 }

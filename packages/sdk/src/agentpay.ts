@@ -74,6 +74,21 @@ export class AgentPay {
         const { waitForApproval } = await import('./transactions/poller.js');
         return waitForApproval(txId, this.txManager, options);
       },
+      requestApproval: async (txId: string): Promise<{ action: 'approved' | 'rejected'; passphrase?: string; reason?: string }> => {
+        const tx = this.txManager.get(txId);
+        if (!tx) throw new Error(`Transaction ${txId} not found.`);
+        if (tx.status !== 'pending') throw new Error(`Transaction ${txId} is not pending.`);
+
+        // Check if private key exists before opening browser
+        const { existsSync } = await import('node:fs');
+        const keyPath = join(this.home, 'keys', 'private.pem');
+        if (!existsSync(keyPath)) {
+          throw new Error('Private key not found. Run "agentpay setup" first.');
+        }
+
+        const { requestBrowserApproval } = await import('./server/approval-server.js');
+        return requestBrowserApproval(tx, this.txManager, this.auditLogger, this.home);
+      },
       execute: async (txId: string): Promise<Receipt> => {
         const tx = this.txManager.get(txId);
         if (!tx) throw new Error(`Transaction ${txId} not found.`);
