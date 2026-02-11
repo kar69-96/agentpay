@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { credentialsToSwapMap, getPlaceholderVariables, PLACEHOLDER_MAP } from './placeholder.js';
 import type { BillingCredentials } from '../vault/types.js';
+import type { BrowserProvider } from './browser-provider.js';
 
 const testCredentials: BillingCredentials = {
   card: { number: '4111111111111111', expiry: '12/28', cvv: '123' },
@@ -56,11 +57,20 @@ describe('placeholder', () => {
   });
 });
 
-describe('executor validation (mocked)', () => {
-  it('PurchaseExecutor requires BROWSERBASE_API_KEY', async () => {
-    // Just verify the import works — actual browser tests need env vars
+describe('PurchaseExecutor', () => {
+  it('defaults to LocalBrowserProvider with no config', async () => {
     const { PurchaseExecutor } = await import('./executor.js');
-    const executor = new PurchaseExecutor({ browserbaseApiKey: 'test', browserbaseProjectId: 'test' });
+    const executor = new PurchaseExecutor();
+    expect(executor).toBeDefined();
+  });
+
+  it('accepts a custom browser provider', async () => {
+    const { PurchaseExecutor } = await import('./executor.js');
+    const mockProvider: BrowserProvider = {
+      createStagehand: vi.fn(),
+      close: vi.fn(),
+    };
+    const executor = new PurchaseExecutor({ provider: mockProvider });
     expect(executor).toBeDefined();
   });
 });

@@ -2,8 +2,10 @@ import { Stagehand } from '@browserbasehq/stagehand';
 import type { BillingCredentials } from '../vault/types.js';
 import type { Transaction } from '../transactions/types.js';
 import type { CheckoutResult, ExecutorConfig } from './types.js';
+import type { BrowserProvider } from './browser-provider.js';
 import { CheckoutFailedError } from '../errors.js';
 import { credentialsToSwapMap, getPlaceholderVariables } from './placeholder.js';
+import { LocalBrowserProvider } from './providers/local-provider.js';
 
 export interface DiscoverResult {
   price: number;
@@ -11,51 +13,19 @@ export interface DiscoverResult {
 }
 
 export class PurchaseExecutor {
-  private config: ExecutorConfig;
+  private provider: BrowserProvider;
+  private modelApiKey?: string;
   private stagehand: Stagehand | null = null;
   private proxyUrl: string | undefined;
   private originalBaseUrl: string | undefined;
 
   constructor(config?: ExecutorConfig) {
-    this.config = {
-      browserbaseApiKey: config?.browserbaseApiKey ?? process.env.BROWSERBASE_API_KEY,
-      browserbaseProjectId: config?.browserbaseProjectId ?? process.env.BROWSERBASE_PROJECT_ID,
-      modelApiKey: config?.modelApiKey ?? process.env.ANTHROPIC_API_KEY,
-      proxyUrl: config?.proxyUrl ?? process.env.AGENTPAY_PROXY_URL,
-    };
-    this.proxyUrl = this.config.proxyUrl;
-  }
-
-  private isProxyMode(): boolean {
-    return !this.config.browserbaseApiKey && !!this.proxyUrl;
+    this.provider = config?.provider ?? new LocalBrowserProvider();
+    this.modelApiKey = config?.modelApiKey ?? process.env.ANTHROPIC_API_KEY;
   }
 
   private createStagehand(): Stagehand {
-    if (!this.config.browserbaseApiKey && !this.proxyUrl) {
-      throw new CheckoutFailedError(
-        'No Browserbase credentials configured. Either set BROWSERBASE_API_KEY and BROWSERBASE_PROJECT_ID for direct mode, or set AGENTPAY_PROXY_URL for proxy mode.',
-      );
-    }
-
-    if (this.isProxyMode()) {
-      // Save original BROWSERBASE_BASE_URL so we can restore it on close
-      this.originalBaseUrl = process.env.BROWSERBASE_BASE_URL;
-      process.env.BROWSERBASE_BASE_URL = this.proxyUrl;
-    }
-
-    return new Stagehand({
-      env: 'BROWSERBASE',
-      apiKey: this.isProxyMode() ? 'placeholder-proxy-key' : this.config.browserbaseApiKey,
-      projectId: this.isProxyMode() ? 'placeholder-proxy-project' : this.config.browserbaseProjectId,
-      model: this.config.modelApiKey
-        ? { modelName: 'claude-3-7-sonnet-latest', apiKey: this.config.modelApiKey }
-        : undefined,
-      browserbaseSessionCreateParams: {
-        browserSettings: {
-          recordSession: false,
-        },
-      },
-    });
+    return this.provider.createStagehand(this.modelApiKey);
   }
 
   /**
@@ -251,14 +221,7 @@ export class PurchaseExecutor {
     } catch {
       // Ignore cleanup errors
     } finally {
-      // Restore original BROWSERBASE_BASE_URL if we changed it
-      if (this.originalBaseUrl !== undefined) {
-        process.env.BROWSERBASE_BASE_URL = this.originalBaseUrl;
-        this.originalBaseUrl = undefined;
-      } else if (this.isProxyMode()) {
-        delete process.env.BROWSERBASE_BASE_URL;
-        this.originalBaseUrl = undefined;
-      }
+      await this.provider.close();
     }
   }
 }

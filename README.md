@@ -1,9 +1,11 @@
 # AgentPay
 
 > Secure payments infrastructure for AI agents.
-> 
-A wallet for your AI agent. Let your agent purchase approved items within a budget, giving you back your time. Fully encrypted and local.
-Everything runs on the user's machine except for CUA running on Browserbase (can configure to https://github.com/trycua/cua + playwright using a headless browser).
+
+
+AgentPay lets AI agents purchase things on the web without ever seeing a user's credit card. Credentials are encrypted locally, purchases require human approval with cryptographic signatures, and checkout happens via headless browser with placeholder injection — real values exist in the DOM for milliseconds.
+
+Everything runs on the user's machine — local Chromium via Playwright, local encryption, local keys.
 
 ## Install
 
@@ -47,17 +49,33 @@ agentpay approve tx_a1b2c3   # signs with your local keypair
 
 1. Human encrypts billing credentials locally (`~/.agentpay/credentials.enc`)
 2. Agent proposes a purchase — human reviews and approves (cryptographically signed)
-3. Browserbase session fills checkout with `{{placeholders}}`
+3. Local Chromium session fills checkout with `{{placeholders}}`
 4. Real values swapped in milliseconds before form submission — agent never sees them
 5. Agent gets a receipt. That's it.
 
 ## Security
 
-- **Credentials never leave your machine** except encrypted in transit to Browserbase at checkout
+- **Credentials never leave your machine** — everything runs on local Chromium
 - **Placeholder injection** — forms show `{{card_number}}` until the instant of submission
 - **Signed purchase mandates** — Ed25519 proof that a real human approved each transaction (inspired by [Google AP2](https://github.com/google-agentic-commerce/AP2))
-- **Recording disabled** — no Browserbase session playback
 - **Open source** — audit the entire security model
+
+## Browser Providers
+
+By default, AgentPay runs a local Chromium browser via Playwright + [Stagehand](https://github.com/browserbase/stagehand). No cloud services needed.
+
+You can plug in a custom browser provider by implementing the `BrowserProvider` interface:
+
+```typescript
+import { AgentPay, type BrowserProvider } from '@useagentpay/sdk';
+
+const ap = new AgentPay({
+  executor: {
+    provider: myCustomProvider,
+    modelApiKey: process.env.ANTHROPIC_API_KEY,
+  },
+});
+```
 
 ## MCP Server
 
@@ -87,11 +105,6 @@ Or add to your host config:
 |---|---|
 | [Usage Guide](USAGE.md) | CLI commands, SDK usage, MCP server details |
 
-## Browserbase
-
-- **Direct mode**: Set `BROWSERBASE_API_KEY` and `BROWSERBASE_PROJECT_ID` to use your own Browserbase account.
-- **Proxy mode**: Set `AGENTPAY_PROXY_URL` to route sessions through a shared proxy (no Browserbase account needed). The proxy keeps the real API key server-side and applies rate limiting.
-- Priority: `BROWSERBASE_API_KEY` (direct) > `AGENTPAY_PROXY_URL` (proxy) > error.
 
 ## License
 

@@ -171,11 +171,12 @@ import { AgentPay } from '@useagentpay/sdk';
 const ap = new AgentPay({
   passphrase: 'your-passphrase',
   executor: {
-    apiKey: process.env.BROWSERBASE_API_KEY,
-    projectId: process.env.BROWSERBASE_PROJECT_ID,
+    modelApiKey: process.env.ANTHROPIC_API_KEY,
   },
 });
 ```
+
+By default, the executor uses local Chromium via Playwright. No cloud browser service needed.
 
 ### Propose a purchase
 
@@ -215,6 +216,26 @@ console.log(`Balance: $${status.balance}`);
 console.log(`Pending: ${status.pending.length}`);
 ```
 
+### Custom browser provider
+
+Implement the `BrowserProvider` interface to use a different browser backend:
+
+```typescript
+import { AgentPay, type BrowserProvider } from '@useagentpay/sdk';
+import { Stagehand } from '@browserbasehq/stagehand';
+
+const myProvider: BrowserProvider = {
+  createStagehand(modelApiKey?: string) {
+    return new Stagehand({ env: 'LOCAL', /* ... */ });
+  },
+  async close() {},
+};
+
+const ap = new AgentPay({
+  executor: { provider: myProvider },
+});
+```
+
 ---
 
 ## Workflows
@@ -251,8 +272,7 @@ Terminal states: `completed`, `rejected`, `failed`.
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `BROWSERBASE_API_KEY` | Browserbase API key for browser sessions | Required for execution |
-| `BROWSERBASE_PROJECT_ID` | Browserbase project ID | Required for execution |
+| `ANTHROPIC_API_KEY` | LLM API key for AI-driven browser navigation | — |
 | `AGENTPAY_HOME` | Override data directory | `~/.agentpay` |
 | `AGENTPAY_WEB_URL` | Base URL for QR codes | `http://localhost:3000` |
 

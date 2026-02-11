@@ -53,24 +53,18 @@ CLI (cli.ts + commands/)
 AgentPay facade (agentpay.ts)
     ↓ composes
 BudgetManager + TransactionManager + AuditLogger + PurchaseExecutor
-    ↓ uses
-vault/ + auth/ + utils/
-    ↓
-node:crypto + node:fs + @browserbasehq/stagehand
+    ↓ uses                                             ↓ delegates to
+vault/ + auth/ + utils/                          BrowserProvider interface
+    ↓                                                  ↓
+node:crypto + node:fs                   LocalBrowserProvider (default)
+                                        └─ Stagehand env:'LOCAL' + Playwright + Chromium
 ```
 
-### Browserbase Proxy (`packages/web/src/app/api/browserbase/`)
+### Browser Provider Architecture
 
-Optional reverse proxy so SDK users can execute purchases without their own Browserbase account.
+`PurchaseExecutor` delegates browser creation to a `BrowserProvider` interface (`executor/browser-provider.ts`). Ships with `LocalBrowserProvider` as the default — runs Chromium locally via Playwright + Stagehand, no cloud services needed.
 
-```
-PurchaseExecutor (proxy mode: AGENTPAY_PROXY_URL set, no BROWSERBASE_API_KEY)
-  → Stagehand → Browserbase SDK (BROWSERBASE_BASE_URL → proxy)
-    → Next.js catch-all route (replaces auth header, overrides projectId)
-      → api.browserbase.com
-```
-
-Priority: `BROWSERBASE_API_KEY` (direct) > `AGENTPAY_PROXY_URL` (proxy) > descriptive error.
+Custom providers can be injected via `ExecutorConfig.provider` to use alternative browser backends.
 
 ### MCP Server (`packages/mcp-server`)
 
@@ -88,10 +82,9 @@ Or via CLI: `agentpay mcp` (stdio) / `agentpay mcp --http` (HTTP)
 
 ### Core Security Model
 
-**Three-layer credential protection:**
+**Two-layer credential protection:**
 1. **Vault** — AES-256-GCM with PBKDF2 (SHA-512, 100k iterations). Random salt + IV per encryption. File at `~/.agentpay/credentials.enc`.
-2. **Browserbase** — Sessions created with `recordSession: false`.
-3. **Placeholder injection** — Stagehand fills forms with `%var%` variables (AI never sees real values). Real credentials swapped via atomic `page.evaluate()` at submission time.
+2. **Placeholder injection** — Stagehand fills forms with `%var%` variables (AI never sees real values). Real credentials swapped via atomic `page.evaluate()` at submission time.
 
 **Purchase mandates** — Ed25519 signatures over SHA-256 hash of transaction details. Private key passphrase-protected (AES-256-CBC). Human must sign to approve any purchase.
 
@@ -123,13 +116,13 @@ All state is file-based JSON under `~/.agentpay/` (overridable via `AGENTPAY_HOM
 - **tsup** bundles the SDK into ESM + CJS + DTS. The CLI entry is `src/cli.ts`, the library entry is `src/index.ts`.
 - **Dynamic imports** in CLI commands — each command is lazily loaded via `await import()` in the commander action handler.
 - **Stagehand v3 API** — page access is `stagehand.context.activePage()`, act takes `(instruction: string, options?)`, extract takes `(instruction: string)`.
+- **BrowserProvider pattern** — `PurchaseExecutor` accepts a `BrowserProvider` via `ExecutorConfig.provider`. Defaults to `LocalBrowserProvider` (local Chromium). Custom providers implement `createStagehand()` + `close()`.
 
 ## Environment Variables
 
 | Variable | Purpose |
 |----------|---------|
-| `BROWSERBASE_API_KEY` | Required for purchase execution |
-| `BROWSERBASE_PROJECT_ID` | Required for purchase execution |
+| `ANTHROPIC_API_KEY` | LLM API key for Stagehand AI navigation |
 | `AGENTPAY_HOME` | Override `~/.agentpay/` data directory |
 | `AGENTPAY_WEB_URL` | QR code base URL (default: `http://localhost:3000`) |
 | `AGENTPAY_PASSPHRASE` | MCP server: passphrase for execute (env mode) |

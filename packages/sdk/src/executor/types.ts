@@ -1,3 +1,5 @@
+import type { BrowserProvider } from './browser-provider.js';
+
 export interface CheckoutResult {
   success: boolean;
   confirmationId?: string;
@@ -5,8 +7,9 @@ export interface CheckoutResult {
 }
 
 export interface ExecutorConfig {
-  browserbaseApiKey?: string;
-  browserbaseProjectId?: string;
+  /** Custom browser provider. Defaults to LocalBrowserProvider (local Chromium). */
+  provider?: BrowserProvider;
+  /** LLM API key for Stagehand's AI-driven navigation (e.g. ANTHROPIC_API_KEY). */
   modelApiKey?: string;
   proxyUrl?: string;
 }
