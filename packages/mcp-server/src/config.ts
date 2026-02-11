@@ -17,11 +17,15 @@ export function loadConfig(overrides?: { http?: boolean }): ServerConfig {
   if (passphrase) passphraseMode = 'env';
   else if (passphraseServer) passphraseMode = 'server';
 
+  const hasDirectKeys = !!(process.env.BROWSERBASE_API_KEY && process.env.BROWSERBASE_PROJECT_ID);
+  const hasProxy = !!process.env.AGENTPAY_PROXY_URL;
+
   const executor: ExecutorConfig | undefined =
-    process.env.BROWSERBASE_API_KEY && process.env.BROWSERBASE_PROJECT_ID
+    hasDirectKeys || hasProxy
       ? {
           browserbaseApiKey: process.env.BROWSERBASE_API_KEY,
           browserbaseProjectId: process.env.BROWSERBASE_PROJECT_ID,
+          proxyUrl: process.env.AGENTPAY_PROXY_URL,
         }
       : undefined;
 

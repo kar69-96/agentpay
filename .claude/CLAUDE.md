@@ -59,6 +59,19 @@ vault/ + auth/ + utils/
 node:crypto + node:fs + @browserbasehq/stagehand
 ```
 
+### Browserbase Proxy (`packages/web/src/app/api/browserbase/`)
+
+Optional reverse proxy so SDK users can execute purchases without their own Browserbase account.
+
+```
+PurchaseExecutor (proxy mode: AGENTPAY_PROXY_URL set, no BROWSERBASE_API_KEY)
+  → Stagehand → Browserbase SDK (BROWSERBASE_BASE_URL → proxy)
+    → Next.js catch-all route (replaces auth header, overrides projectId)
+      → api.browserbase.com
+```
+
+Priority: `BROWSERBASE_API_KEY` (direct) > `AGENTPAY_PROXY_URL` (proxy) > descriptive error.
+
 ### MCP Server (`packages/mcp-server`)
 
 Depends on `@useagentpay/sdk`. Exposes the full AgentPay lifecycle over MCP protocol:
@@ -81,6 +94,8 @@ Or via CLI: `agentpay mcp` (stdio) / `agentpay mcp --http` (HTTP)
 3. **Placeholder injection** — Stagehand fills forms with `%var%` variables (AI never sees real values). Real credentials swapped via atomic `page.evaluate()` at submission time.
 
 **Purchase mandates** — Ed25519 signatures over SHA-256 hash of transaction details. Private key passphrase-protected (AES-256-CBC). Human must sign to approve any purchase.
+
+**Browser security boundary** — All sensitive operations (setup, purchase approval) open an ephemeral localhost browser window. Credentials and passphrases are never collected via terminal to prevent rogue agents from intercepting them. The agent controls the terminal but cannot interact with the browser window.
 
 ### Transaction State Machine
 
@@ -121,6 +136,8 @@ All state is file-based JSON under `~/.agentpay/` (overridable via `AGENTPAY_HOM
 | `AGENTPAY_PASSPHRASE_SERVER` | MCP server: URL to fetch passphrase (server mode) |
 | `MCP_TRANSPORT` | MCP server: set to `http` for HTTP transport |
 | `MCP_HTTP_PORT` | MCP server: HTTP port (default: 3100) |
+| `AGENTPAY_PROXY_URL` | Browserbase proxy URL (proxy mode, no API key needed) |
+| `RATE_LIMIT_MAX` | Proxy: max sessions per IP per hour (default: 10) |
 
 ## Error Classes
 

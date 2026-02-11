@@ -1,6 +1,5 @@
 export async function mcpCommand(options: { http?: boolean }) {
   try {
-    // @ts-expect-error — optional peer dependency, may not be installed
     const { startServer } = await import('@useagentpay/mcp-server');
     await (startServer as (opts: { http?: boolean }) => Promise<void>)({ http: options.http });
   } catch (err) {

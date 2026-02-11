@@ -8,4 +8,5 @@ export interface ExecutorConfig {
   browserbaseApiKey?: string;
   browserbaseProjectId?: string;
   modelApiKey?: string;
+  proxyUrl?: string;
 }

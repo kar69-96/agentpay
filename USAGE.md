@@ -15,12 +15,15 @@ agentpay setup
 # 2. Configure spending limits
 agentpay budget --set 200 --limit-per-tx 50
 
-# 3. Make a purchase
-agentpay buy \
+# 3. Propose a purchase
+agentpay propose \
   --merchant "Amazon" \
+  --amount 12.99 \
   --description "USB-C cable" \
-  --url "https://amazon.com/dp/B0XXXXXX" \
-  --amount 12.99
+  --url "https://amazon.com/dp/B0XXXXXX"
+
+# 4. Approve it
+agentpay approve <txId>
 ```
 
 ---
@@ -51,27 +54,26 @@ agentpay budget --set 200 --limit-per-tx 50  # Set both
 | `--set <amount>` | Total spending budget |
 | `--limit-per-tx <amount>` | Max amount per single purchase |
 
-### `agentpay buy`
+### `agentpay propose`
 
-Propose, approve, and execute a purchase in one flow. Opens a Browserbase browser session to complete checkout.
+Propose a purchase without approving or executing it. Creates a pending transaction for later approval.
 
 ```bash
-agentpay buy \
+agentpay propose \
   --merchant "Amazon" \
+  --amount 29.99 \
   --description "Wireless mouse" \
-  --url "https://amazon.com/dp/B09ABC1234" \
-  --amount 29.99
+  --url "https://amazon.com/dp/B09ABC1234"
 ```
 
 | Flag | Required | Description |
 |------|----------|-------------|
-| `--merchant <name>` | Yes | Merchant name (e.g., `amazon.com`) |
+| `--merchant <name>` | Yes | Merchant name |
+| `--amount <amount>` | Yes | Purchase amount in USD |
 | `--description <desc>` | Yes | What is being purchased |
 | `--url <url>` | Yes | Product or checkout URL |
-| `--amount <amount>` | No | Price (auto-detected from page if omitted) |
-| `--pickup` | No | Select in-store pickup if available |
 
-**Flow:** Validates budget -> prompts for approval + passphrase -> signs mandate -> fills checkout -> completes purchase.
+Prints the transaction ID and status. Follow up with `agentpay approve <txId>` to approve.
 
 ### `agentpay pending`
 
@@ -222,20 +224,13 @@ console.log(`Pending: ${status.pending.length}`);
 ```
 Agent                           Human
   │                               │
-  ├─ propose purchase ───────────►│
+  ├─ agentpay propose ──────────►│
   │                               ├─ agentpay pending
   │                               ├─ agentpay approve <txId>
   │◄── poll for approval ────────┤
   ├─ execute purchase             │
   ├─ log receipt                  │
   │                               ├─ agentpay status
-```
-
-### All-in-one (human runs buy directly)
-
-```bash
-agentpay buy --merchant "Amazon" --description "Cable" --url "..." --amount 12.99
-# Prompts for approval + passphrase inline, then executes
 ```
 
 ---
@@ -256,8 +251,8 @@ Terminal states: `completed`, `rejected`, `failed`.
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `BROWSERBASE_API_KEY` | Browserbase API key for browser sessions | Required for `buy` |
-| `BROWSERBASE_PROJECT_ID` | Browserbase project ID | Required for `buy` |
+| `BROWSERBASE_API_KEY` | Browserbase API key for browser sessions | Required for execution |
+| `BROWSERBASE_PROJECT_ID` | Browserbase project ID | Required for execution |
 | `AGENTPAY_HOME` | Override data directory | `~/.agentpay` |
 | `AGENTPAY_WEB_URL` | Base URL for QR codes | `http://localhost:3000` |
 

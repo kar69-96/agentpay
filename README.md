@@ -87,18 +87,13 @@ Or add to your host config:
 
 | Doc | Description |
 |---|---|
-| [Usage Guide](USAGE.md) | CLI commands + SDK guide |
-| [Architecture](docs/ARCHITECTURE.md) | System design |
-| [Security](docs/SECURITY.md) | Security model deep dive |
-| [User Flow](docs/USER_FLOW.md) | Step-by-step journeys |
-| [API Reference](docs/API_REFERENCE.md) | SDK + CLI reference |
-| [Tech Stack](docs/TECH_STACK.md) | Technology choices |
-| [File Structure](docs/FILE_STRUCTURE.md) | Repo organization |
+| [Usage Guide](USAGE.md) | CLI commands, SDK usage, MCP server details |
 
 ## Browserbase
 
-- **SDK users**: AgentPay handles Browserbase. Set `BROWSERBASE_API_KEY` and `BROWSERBASE_PROJECT_ID`.
-- **Fork users**: Set up your own Browserbase account.
+- **Direct mode**: Set `BROWSERBASE_API_KEY` and `BROWSERBASE_PROJECT_ID` to use your own Browserbase account.
+- **Proxy mode**: Set `AGENTPAY_PROXY_URL` to route sessions through a shared proxy (no Browserbase account needed). The proxy keeps the real API key server-side and applies rate limiting.
+- Priority: `BROWSERBASE_API_KEY` (direct) > `AGENTPAY_PROXY_URL` (proxy) > error.
 
 ## License
 
