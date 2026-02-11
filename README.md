@@ -7,6 +7,9 @@ AgentPay lets AI agents purchase things on the web without ever seeing a user's 
 
 Everything runs on the user's machine — local Chromium via Playwright, local encryption, local keys.
 
+350+ package downloads and counting!
+https://useagentpay-landing.vercel.app
+
 ## Install
 
 ```bash
