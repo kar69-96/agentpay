@@ -41,6 +41,14 @@
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   },
+  "peerDependencies": {
+    "@useagentpay/mcp-server": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@useagentpay/mcp-server": {
+      "optional": true
+    }
+  },
   "license": "MIT",
   "engines": {
     "node": ">=20"

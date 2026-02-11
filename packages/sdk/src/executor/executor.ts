@@ -13,20 +13,40 @@ export interface DiscoverResult {
 export class PurchaseExecutor {
   private config: ExecutorConfig;
   private stagehand: Stagehand | null = null;
+  private proxyUrl: string | undefined;
+  private originalBaseUrl: string | undefined;
 
   constructor(config?: ExecutorConfig) {
     this.config = {
       browserbaseApiKey: config?.browserbaseApiKey ?? process.env.BROWSERBASE_API_KEY,
       browserbaseProjectId: config?.browserbaseProjectId ?? process.env.BROWSERBASE_PROJECT_ID,
       modelApiKey: config?.modelApiKey ?? process.env.ANTHROPIC_API_KEY,
+      proxyUrl: config?.proxyUrl ?? process.env.AGENTPAY_PROXY_URL,
     };
+    this.proxyUrl = this.config.proxyUrl;
+  }
+
+  private isProxyMode(): boolean {
+    return !this.config.browserbaseApiKey && !!this.proxyUrl;
   }
 
   private createStagehand(): Stagehand {
+    if (!this.config.browserbaseApiKey && !this.proxyUrl) {
+      throw new CheckoutFailedError(
+        'No Browserbase credentials configured. Either set BROWSERBASE_API_KEY and BROWSERBASE_PROJECT_ID for direct mode, or set AGENTPAY_PROXY_URL for proxy mode.',
+      );
+    }
+
+    if (this.isProxyMode()) {
+      // Save original BROWSERBASE_BASE_URL so we can restore it on close
+      this.originalBaseUrl = process.env.BROWSERBASE_BASE_URL;
+      process.env.BROWSERBASE_BASE_URL = this.proxyUrl;
+    }
+
     return new Stagehand({
       env: 'BROWSERBASE',
-      apiKey: this.config.browserbaseApiKey,
-      projectId: this.config.browserbaseProjectId,
+      apiKey: this.isProxyMode() ? 'placeholder-proxy-key' : this.config.browserbaseApiKey,
+      projectId: this.isProxyMode() ? 'placeholder-proxy-project' : this.config.browserbaseProjectId,
       model: this.config.modelApiKey
         ? { modelName: 'claude-3-7-sonnet-latest', apiKey: this.config.modelApiKey }
         : undefined,
@@ -230,6 +250,15 @@ export class PurchaseExecutor {
       }
     } catch {
       // Ignore cleanup errors
+    } finally {
+      // Restore original BROWSERBASE_BASE_URL if we changed it
+      if (this.originalBaseUrl !== undefined) {
+        process.env.BROWSERBASE_BASE_URL = this.originalBaseUrl;
+        this.originalBaseUrl = undefined;
+      } else if (this.isProxyMode()) {
+        delete process.env.BROWSERBASE_BASE_URL;
+        this.originalBaseUrl = undefined;
+      }
     }
   }
 }
