@@ -6,6 +6,7 @@ export type { KeyPair, PurchaseMandate, TransactionDetails } from './auth/types.
 export type { Wallet } from './budget/types.js';
 export type { Transaction, TransactionStatus, Receipt, ProposeOptions } from './transactions/types.js';
 export type { CheckoutResult, ExecutorConfig } from './executor/types.js';
+export type { BrowserProvider } from './executor/browser-provider.js';
 
 // Errors
 export {
@@ -44,6 +45,7 @@ export { AuditLogger } from './audit/logger.js';
 
 // Executor
 export { PurchaseExecutor } from './executor/executor.js';
+export { LocalBrowserProvider } from './executor/providers/local-provider.js';
 export { PLACEHOLDER_MAP, getPlaceholderVariables, credentialsToSwapMap } from './executor/placeholder.js';
 
 // AgentPay

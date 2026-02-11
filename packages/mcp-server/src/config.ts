@@ -17,13 +17,10 @@ export function loadConfig(overrides?: { http?: boolean }): ServerConfig {
   if (passphrase) passphraseMode = 'env';
   else if (passphraseServer) passphraseMode = 'server';
 
-  const executor: ExecutorConfig | undefined =
-    process.env.BROWSERBASE_API_KEY && process.env.BROWSERBASE_PROJECT_ID
-      ? {
-          browserbaseApiKey: process.env.BROWSERBASE_API_KEY,
-          browserbaseProjectId: process.env.BROWSERBASE_PROJECT_ID,
-        }
-      : undefined;
+  // Default: local Chromium via Stagehand. Only modelApiKey needed for AI navigation.
+  const executor: ExecutorConfig = {
+    modelApiKey: process.env.ANTHROPIC_API_KEY,
+  };
 
   return {
     home: process.env.AGENTPAY_HOME || undefined,

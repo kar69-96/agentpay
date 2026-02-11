@@ -2,8 +2,10 @@ import { Stagehand } from '@browserbasehq/stagehand';
 import type { BillingCredentials } from '../vault/types.js';
 import type { Transaction } from '../transactions/types.js';
 import type { CheckoutResult, ExecutorConfig } from './types.js';
+import type { BrowserProvider } from './browser-provider.js';
 import { CheckoutFailedError } from '../errors.js';
 import { credentialsToSwapMap, getPlaceholderVariables } from './placeholder.js';
+import { LocalBrowserProvider } from './providers/local-provider.js';
 
 export interface DiscoverResult {
   price: number;
@@ -11,31 +13,17 @@ export interface DiscoverResult {
 }
 
 export class PurchaseExecutor {
-  private config: ExecutorConfig;
+  private provider: BrowserProvider;
+  private modelApiKey?: string;
   private stagehand: Stagehand | null = null;
 
   constructor(config?: ExecutorConfig) {
-    this.config = {
-      browserbaseApiKey: config?.browserbaseApiKey ?? process.env.BROWSERBASE_API_KEY,
-      browserbaseProjectId: config?.browserbaseProjectId ?? process.env.BROWSERBASE_PROJECT_ID,
-      modelApiKey: config?.modelApiKey ?? process.env.ANTHROPIC_API_KEY,
-    };
+    this.provider = config?.provider ?? new LocalBrowserProvider();
+    this.modelApiKey = config?.modelApiKey ?? process.env.ANTHROPIC_API_KEY;
   }
 
   private createStagehand(): Stagehand {
-    return new Stagehand({
-      env: 'BROWSERBASE',
-      apiKey: this.config.browserbaseApiKey,
-      projectId: this.config.browserbaseProjectId,
-      model: this.config.modelApiKey
-        ? { modelName: 'claude-3-7-sonnet-latest', apiKey: this.config.modelApiKey }
-        : undefined,
-      browserbaseSessionCreateParams: {
-        browserSettings: {
-          recordSession: false,
-        },
-      },
-    });
+    return this.provider.createStagehand(this.modelApiKey);
   }
 
   /**
@@ -230,6 +218,8 @@ export class PurchaseExecutor {
       }
     } catch {
       // Ignore cleanup errors
+    } finally {
+      await this.provider.close();
     }
   }
 }

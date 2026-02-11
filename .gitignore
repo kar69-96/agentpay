@@ -7,3 +7,6 @@ dist/
 .env.local
 coverage/
 screenshot-*.png
+
+# Browserbase provider (optional, not part of open-source repo)
+packages/sdk/src/executor/providers/browserbase-provider.ts
