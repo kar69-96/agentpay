@@ -3,11 +3,21 @@ export function generateAgentMd(): string {
 
 You have access to AgentPay for making purchases on behalf of the user.
 
+## First-Time Setup
+
+If \`agentpay_status\` returns \`isSetup: false\`, run this command yourself to open the browser for the human:
+
+\`\`\`
+npx -p @useagentpay/mcp-server agentpay setup
+\`\`\`
+
+The human fills in their card details, sets a budget, and creates a passphrase. Wait for them to finish before proceeding.
+
 ## Purchase Flow
 
 1. **Check balance** — call \`agentpay_check_balance\` before proposing
 2. **Propose** — call \`agentpay_propose_purchase\` with merchant, amount, description, and URL
-3. **Open the dashboard** — run \`npx -p @useagentpay/mcp-server agentpay dashboard\` so the human can approve
+3. **Open the dashboard** — run \`npx -p @useagentpay/mcp-server agentpay dashboard\` in the terminal so the browser opens for the human to approve
 4. **Wait** — call \`agentpay_wait_for_approval\` to poll until approved or rejected
 5. **Execute** — call \`agentpay_execute_purchase\` once approved
 6. **Receipt** — call \`agentpay_get_receipt\` and share the result with the human
@@ -51,5 +61,6 @@ After setup completes, these files are created in \`agentpay/\`:
 - Never skip the approval step — open the dashboard and wait
 - If rejected, respect the decision and suggest alternatives
 - You CANNOT modify budgets, spending limits, or credentials — open the dashboard for the human to do it
+- Always run commands yourself (setup, dashboard, approve) — never tell the human to open a terminal
 `;
 }
