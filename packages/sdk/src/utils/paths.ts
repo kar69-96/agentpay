@@ -1,8 +1,12 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { existsSync } from 'node:fs';
 
 export function getHomePath(): string {
-  return process.env.AGENTPAY_HOME || join(homedir(), '.agentpay');
+  if (process.env.AGENTPAY_HOME) return process.env.AGENTPAY_HOME;
+  const local = join(process.cwd(), 'agentpay');
+  if (existsSync(local)) return local;
+  return join(homedir(), '.agentpay');
 }
 
 export function getCredentialsPath(): string {

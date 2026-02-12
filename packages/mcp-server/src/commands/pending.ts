@@ -1,5 +1,4 @@
-import { TransactionManager } from '../transactions/manager.js';
-import { formatCurrency } from '../utils/display.js';
+import { TransactionManager, formatCurrency } from '@useagentpay/sdk';
 
 export function pendingCommand(): void {
   const tm = new TransactionManager();

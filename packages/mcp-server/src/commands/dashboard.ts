@@ -1,12 +1,11 @@
-import { startServer } from '../server/index.js';
-import { openBrowser } from '../utils/open-browser.js';
+import { startDashboardServer, openBrowser } from '@useagentpay/sdk';
 
 export async function dashboardCommand(options: { port: string }): Promise<void> {
   const port = parseInt(options.port, 10) || 3141;
   const url = `http://127.0.0.1:${port}`;
 
   try {
-    const server = await startServer(port);
+    const server = await startDashboardServer(port);
 
     console.log(`AgentPay Dashboard running at ${url}`);
     console.log('Press Ctrl+C to stop.\n');

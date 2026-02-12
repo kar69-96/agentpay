@@ -1,13 +1,22 @@
-#!/usr/bin/env node
 import { Command } from 'commander';
-import { VERSION } from './index.js';
+
+declare const __PKG_VERSION__: string;
+const VERSION = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0';
 
 const program = new Command();
 
 program
   .name('agentpay')
-  .description('Local-first payments SDK for AI agents')
+  .description('AgentPay – MCP server & CLI for AI agent payments')
   .version(VERSION);
+
+program
+  .command('init')
+  .description('Initialize AgentPay in the current directory')
+  .action(async () => {
+    const { initCommand } = await import('./commands/init.js');
+    initCommand();
+  });
 
 program
   .command('setup')
@@ -19,12 +28,10 @@ program
 
 program
   .command('budget')
-  .description('View or configure spending budget')
-  .option('--set <amount>', 'Set total budget')
-  .option('--limit-per-tx <amount>', 'Set per-transaction limit')
-  .action(async (options) => {
+  .description('View current spending budget (configure via dashboard)')
+  .action(async () => {
     const { budgetCommand } = await import('./commands/budget.js');
-    budgetCommand(options);
+    budgetCommand();
   });
 
 program
@@ -81,16 +88,6 @@ program
   });
 
 program
-  .command('qr')
-  .description('Display QR code for web-based setup')
-  .option('--budget <amount>', 'Suggested budget amount')
-  .option('--message <msg>', 'Message to display on setup page')
-  .action(async (options: { budget?: string; message?: string }) => {
-    const { qrCommand } = await import('./commands/qr.js');
-    await qrCommand(options);
-  });
-
-program
   .command('reset')
   .description('Delete all AgentPay data')
   .action(async () => {
@@ -108,12 +105,12 @@ program
   });
 
 program
-  .command('mcp')
-  .description('Start AgentPay MCP server (stdio transport)')
+  .command('serve')
+  .description('Start AgentPay MCP server')
   .option('--http', 'Use HTTP transport instead of stdio')
   .action(async (options: { http?: boolean }) => {
-    const { mcpCommand } = await import('./commands/mcp.js');
-    await mcpCommand(options);
+    const { serveCommand } = await import('./commands/serve.js');
+    await serveCommand(options);
   });
 
 program.parse();

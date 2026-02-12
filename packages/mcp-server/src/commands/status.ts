@@ -1,5 +1,4 @@
-import { AgentPay } from '../agentpay.js';
-import { formatStatus } from '../utils/display.js';
+import { AgentPay, formatStatus } from '@useagentpay/sdk';
 
 export function statusCommand(): void {
   const ap = new AgentPay();

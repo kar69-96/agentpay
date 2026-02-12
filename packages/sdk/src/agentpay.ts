@@ -48,16 +48,6 @@ export class AgentPay {
         const w = bm.getBalance();
         return { budget: w.budget, limitPerTx: w.limitPerTx, remaining: w.balance };
       },
-      generateFundingQR: async (options?: { suggestedBudget?: number; message?: string }) => {
-        const QRCode = await import('qrcode');
-        const params = new URLSearchParams();
-        if (options?.suggestedBudget) params.set('budget', String(options.suggestedBudget));
-        if (options?.message) params.set('msg', options.message);
-        const baseUrl = process.env.AGENTPAY_WEB_URL ?? 'http://localhost:3000';
-        const url = `${baseUrl}/setup${params.toString() ? `?${params.toString()}` : ''}`;
-        const qrDataUrl = await QRCode.toDataURL(url);
-        return { url, qrDataUrl };
-      },
     };
   }
 

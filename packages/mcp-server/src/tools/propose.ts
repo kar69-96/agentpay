@@ -17,11 +17,6 @@ export function registerProposeTool(server: McpServer, ap: AgentPay) {
       try {
         const tx = ap.transactions.propose({ merchant, amount, description, url });
 
-        // Fire-and-forget: open browser for human approval
-        ap.transactions.requestApproval(tx.id).catch(() => {
-          // Silently ignore — human can still use CLI fallback
-        });
-
         return {
           content: [
             {
@@ -32,7 +27,7 @@ export function registerProposeTool(server: McpServer, ap: AgentPay) {
                 status: tx.status,
                 merchant: tx.merchant,
                 amount: tx.amount,
-                nextAction: 'Approval page opened in browser. Waiting for human approval...',
+                nextAction: `Purchase proposed. Open the dashboard for the human to approve: npx -p @useagentpay/mcp-server agentpay dashboard — then call agentpay_wait_for_approval with txId "${tx.id}".`,
               }),
             },
           ],
