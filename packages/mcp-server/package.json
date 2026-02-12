@@ -1,6 +1,6 @@
 {
   "name": "@useagentpay/mcp-server",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "mcpName": "io.github.kar69-96/agentpay",
   "description": "MCP server for AgentPay – exposes payment tools to AI agents",
   "type": "module",
@@ -25,7 +25,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@useagentpay/sdk": "workspace:^",
+    "@useagentpay/sdk": "^0.1.1",
     "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^3.25.0 || ^4.0.0"
   },
