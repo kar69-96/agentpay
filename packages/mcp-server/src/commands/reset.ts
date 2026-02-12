@@ -1,6 +1,5 @@
 import { rmSync, existsSync } from 'node:fs';
-import { promptInput } from '../utils/prompt.js';
-import { getHomePath } from '../utils/paths.js';
+import { getHomePath, promptInput } from '@useagentpay/sdk';
 
 export async function resetCommand(): Promise<void> {
   const home = getHomePath();

@@ -3,255 +3,125 @@
 ## Installation
 
 ```bash
-npm install @useagentpay/sdk
+npx -p @useagentpay/mcp-server agentpay init
 ```
+
+This creates an `agentpay/` folder in your project directory with an `AGENT.md` file containing instructions for AI agents.
 
 ## Quick Start
 
 ```bash
-# 1. Set up credentials (human, one-time)
-agentpay setup
+# 1. Initialize (creates agentpay/ folder)
+npx -p @useagentpay/mcp-server agentpay init
 
-# 2. Configure spending limits
-agentpay budget --set 200 --limit-per-tx 50
+# 2. Set up credentials, budget, and limits (opens browser)
+npx -p @useagentpay/mcp-server agentpay setup
 
-# 3. Propose a purchase
-agentpay propose \
-  --merchant "Amazon" \
-  --amount 12.99 \
-  --description "USB-C cable" \
-  --url "https://amazon.com/dp/B0XXXXXX"
+# 3. Connect MCP server to your AI host (see below)
 
-# 4. Approve it
-agentpay approve <txId>
+# 4. Manage wallet, approve/reject purchases
+npx -p @useagentpay/mcp-server agentpay dashboard
 ```
 
 ---
 
 ## Commands
 
-### `agentpay setup`
+### `npx -p @useagentpay/mcp-server agentpay init`
 
-Interactive one-time setup. Prompts for passphrase, card details, billing/shipping address. Creates encrypted vault, Ed25519 keypair, and wallet at `~/.agentpay/`.
+Initialize AgentPay in the current directory. Creates `agentpay/` folder with `AGENT.md`.
 
-```bash
-agentpay setup
-```
+### `npx -p @useagentpay/mcp-server agentpay setup`
 
-### `agentpay budget`
+Opens a browser window on localhost for the human to:
+- Enter card and billing details (encrypted with AES-256-GCM)
+- Generate Ed25519 keypair for signing approvals
+- Set budget and per-transaction spending limits
 
-View or configure spending limits.
+After setup, the `agentpay/` folder contains:
+- `credentials.enc` — encrypted billing credentials
+- `keys/public.pem` — Ed25519 public key
+- `keys/private.pem` — Ed25519 private key (passphrase-protected)
+- `wallet.json` — budget, balance, per-tx limit, spent total
+- `transactions.json` — transaction log
+- `audit.log` — append-only action log
 
-```bash
-agentpay budget                          # View current budget
-agentpay budget --set 200               # Set total budget to $200
-agentpay budget --limit-per-tx 50       # Set per-transaction limit to $50
-agentpay budget --set 200 --limit-per-tx 50  # Set both
-```
+### `npx -p @useagentpay/mcp-server agentpay dashboard`
 
-| Flag | Description |
-|------|-------------|
-| `--set <amount>` | Total spending budget |
-| `--limit-per-tx <amount>` | Max amount per single purchase |
+Opens the browser dashboard for the human to:
+- Approve or reject pending purchases
+- Change budget and spending limits
+- Add funds
+- Update payment credentials
+- View transaction history
 
-### `agentpay propose`
-
-Propose a purchase without approving or executing it. Creates a pending transaction for later approval.
-
-```bash
-agentpay propose \
-  --merchant "Amazon" \
-  --amount 29.99 \
-  --description "Wireless mouse" \
-  --url "https://amazon.com/dp/B09ABC1234"
-```
-
-| Flag | Required | Description |
-|------|----------|-------------|
-| `--merchant <name>` | Yes | Merchant name |
-| `--amount <amount>` | Yes | Purchase amount in USD |
-| `--description <desc>` | Yes | What is being purchased |
-| `--url <url>` | Yes | Product or checkout URL |
-
-Prints the transaction ID and status. Follow up with `agentpay approve <txId>` to approve.
-
-### `agentpay pending`
-
-List all pending purchase proposals awaiting approval.
+All wallet configuration happens here — not via CLI or MCP tools.
 
 ```bash
-agentpay pending
-```
-
-Output columns: `TX_ID`, `MERCHANT`, `AMOUNT`, `DESCRIPTION`.
-
-### `agentpay approve <txId>`
-
-Approve a pending purchase. Prompts for passphrase to sign an Ed25519 mandate.
-
-```bash
-agentpay approve tx_abc123
-```
-
-### `agentpay reject <txId>`
-
-Reject a pending purchase.
-
-```bash
-agentpay reject tx_abc123
-agentpay reject tx_abc123 --reason "Too expensive"
-```
-
-| Flag | Description |
-|------|-------------|
-| `--reason <reason>` | Optional rejection reason |
-
-### `agentpay status`
-
-Show wallet balance, budget, limits, pending count, and recent transactions.
-
-```bash
-agentpay status
-```
-
-### `agentpay history`
-
-Show full transaction history with status, merchant, amount, and date.
-
-```bash
-agentpay history
-```
-
-Status values: `[pending]`, `[approved]`, `[executing]`, `[completed]`, `[rejected]`, `[failed]`.
-
-### `agentpay qr`
-
-Display a QR code for web-based setup.
-
-```bash
-agentpay qr
-agentpay qr --budget 100 --message "Setup for team bot"
-```
-
-| Flag | Description |
-|------|-------------|
-| `--budget <amount>` | Suggested budget amount |
-| `--message <msg>` | Message shown on setup page |
-
-### `agentpay dashboard`
-
-Open a browser-based GUI for managing wallet and transactions.
-
-```bash
-agentpay dashboard
-agentpay dashboard --port 8080
+npx -p @useagentpay/mcp-server agentpay dashboard
+npx -p @useagentpay/mcp-server agentpay dashboard --port 8080
 ```
 
 | Flag | Description |
 |------|-------------|
 | `--port <port>` | Server port (default: `3141`) |
 
-### `agentpay reset`
+### `npx -p @useagentpay/mcp-server agentpay status`
+
+Show wallet balance, budget, limits, pending count, and recent transactions (read-only).
+
+### `npx -p @useagentpay/mcp-server agentpay pending`
+
+List all pending purchase proposals awaiting approval (read-only).
+
+### `npx -p @useagentpay/mcp-server agentpay history`
+
+Show full transaction history (read-only).
+
+Status values: `[pending]`, `[approved]`, `[executing]`, `[completed]`, `[rejected]`, `[failed]`.
+
+### `npx -p @useagentpay/mcp-server agentpay approve <txId>`
+
+Approve a pending purchase. Opens a browser window to collect the passphrase and sign an Ed25519 mandate.
+
+### `npx -p @useagentpay/mcp-server agentpay reject <txId>`
+
+Reject a pending purchase.
+
+```bash
+npx -p @useagentpay/mcp-server agentpay reject tx_abc123
+npx -p @useagentpay/mcp-server agentpay reject tx_abc123 --reason "Too expensive"
+```
+
+### `npx -p @useagentpay/mcp-server agentpay reset`
 
 Delete all AgentPay data. Requires typing `YES` to confirm.
 
+### `npx -p @useagentpay/mcp-server agentpay serve`
+
+Start the MCP server.
+
 ```bash
-agentpay reset
-```
-
----
-
-## SDK Usage (for agents)
-
-Agents can use the SDK programmatically instead of the CLI.
-
-```typescript
-import { AgentPay } from '@useagentpay/sdk';
-
-const ap = new AgentPay({
-  passphrase: 'your-passphrase',
-  executor: {
-    modelApiKey: process.env.ANTHROPIC_API_KEY,
-  },
-});
-```
-
-By default, the executor uses local Chromium via Playwright. No cloud browser service needed.
-
-### Propose a purchase
-
-```typescript
-const tx = ap.transactions.propose({
-  merchant: 'amazon.com',
-  amount: 29.99,
-  description: 'Wireless mouse',
-  url: 'https://amazon.com/dp/B09ABC1234',
-});
-// tx.id => "tx_abc123"
-```
-
-### Wait for human approval
-
-```typescript
-const result = await ap.transactions.waitForApproval(tx.id, {
-  pollInterval: 2000,   // check every 2s
-  timeout: 300000,       // 5 minute timeout
-});
-```
-
-### Execute an approved purchase
-
-```typescript
-if (result.status === 'approved') {
-  const receipt = await ap.transactions.execute(tx.id);
-  console.log(receipt.confirmationId);
-}
-```
-
-### Check wallet status
-
-```typescript
-const status = ap.status();
-console.log(`Balance: $${status.balance}`);
-console.log(`Pending: ${status.pending.length}`);
-```
-
-### Custom browser provider
-
-Implement the `BrowserProvider` interface to use a different browser backend:
-
-```typescript
-import { AgentPay, type BrowserProvider } from '@useagentpay/sdk';
-import { Stagehand } from '@browserbasehq/stagehand';
-
-const myProvider: BrowserProvider = {
-  createStagehand(modelApiKey?: string) {
-    return new Stagehand({ env: 'LOCAL', /* ... */ });
-  },
-  async close() {},
-};
-
-const ap = new AgentPay({
-  executor: { provider: myProvider },
-});
+npx -p @useagentpay/mcp-server agentpay serve          # stdio (default)
+npx -p @useagentpay/mcp-server agentpay serve --http   # HTTP transport
 ```
 
 ---
 
 ## Workflows
 
-### Human-in-the-loop (agent proposes, human approves)
+### Human-in-the-loop (agent proposes, human approves via dashboard)
 
 ```
-Agent                           Human
-  │                               │
-  ├─ agentpay propose ──────────►│
-  │                               ├─ agentpay pending
-  │                               ├─ agentpay approve <txId>
-  │◄── poll for approval ────────┤
-  ├─ execute purchase             │
-  ├─ log receipt                  │
-  │                               ├─ agentpay status
+Agent                               Human (browser dashboard)
+  │                                   │
+  ├─ propose purchase ──────────────►│
+  │                                   ├─ review in dashboard
+  │                                   ├─ approve (signs mandate)
+  │◄── poll for approval ────────────┤
+  ├─ execute purchase                 │
+  ├─ return receipt                   │
+  │                                   ├─ view in dashboard
 ```
 
 ---
@@ -268,20 +138,11 @@ Terminal states: `completed`, `rejected`, `failed`.
 
 ---
 
-## Environment Variables
-
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `ANTHROPIC_API_KEY` | LLM API key for AI-driven browser navigation | — |
-| `AGENTPAY_HOME` | Override data directory | `~/.agentpay` |
-| `AGENTPAY_WEB_URL` | Base URL for QR codes | `http://localhost:3000` |
-
----
-
-## Data Directory (`~/.agentpay/`)
+## Data Directory (`agentpay/`)
 
 | File | Purpose |
 |------|---------|
+| `AGENT.md` | Instructions for AI agents |
 | `credentials.enc` | AES-256-GCM encrypted billing credentials |
 | `keys/private.pem` | Ed25519 private key (passphrase-protected) |
 | `keys/public.pem` | Ed25519 public key |
@@ -295,24 +156,11 @@ Terminal states: `completed`, `rejected`, `failed`.
 
 AgentPay exposes its full lifecycle via MCP (Model Context Protocol), so any compatible host can use it.
 
-### Install & Run
-
-```bash
-npx @useagentpay/mcp-server          # stdio (default)
-npx @useagentpay/mcp-server --http   # HTTP transport
-```
-
-Or via the CLI:
-```bash
-agentpay mcp          # stdio
-agentpay mcp --http   # HTTP
-```
-
 ### Host Configuration
 
 Add to your Claude Desktop, Cursor, or Claude Code config:
 ```json
-{ "mcpServers": { "agentpay": { "command": "npx", "args": ["@useagentpay/mcp-server"] } } }
+{ "mcpServers": { "agentpay": { "command": "npx", "args": ["-p", "@useagentpay/mcp-server", "agentpay", "serve"] } } }
 ```
 
 ### Available Tools
@@ -344,10 +192,12 @@ Add to your Claude Desktop, Cursor, or Claude Code config:
 | `budget-check` | Balance + pending summary |
 | `purchase-status` | Recent transaction history |
 
-### MCP Environment Variables
+### Environment Variables
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
+| `ANTHROPIC_API_KEY` | LLM API key for AI-driven browser navigation | — |
+| `AGENTPAY_HOME` | Override data directory | `./agentpay` |
 | `AGENTPAY_PASSPHRASE` | Passphrase for execute (env mode) | — |
 | `AGENTPAY_PASSPHRASE_SERVER` | URL to fetch passphrase (server mode) | — |
 | `MCP_TRANSPORT` | Set to `http` for HTTP transport | `stdio` |
@@ -359,7 +209,7 @@ Add to your Claude Desktop, Cursor, or Claude Code config:
 
 | Error | Meaning |
 |-------|---------|
-| `NotSetupError` | Run `agentpay setup` first |
+| `NotSetupError` | Run setup first |
 | `DecryptError` | Wrong passphrase |
 | `InsufficientBalanceError` | Purchase exceeds remaining budget |
 | `ExceedsTxLimitError` | Purchase exceeds per-transaction limit |

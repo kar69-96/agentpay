@@ -46,14 +46,22 @@ export { AuditLogger } from './audit/logger.js';
 
 // Executor
 export { PurchaseExecutor } from './executor/executor.js';
-export { LocalBrowserProvider } from './executor/providers/local-provider.js';
 export { PLACEHOLDER_MAP, getPlaceholderVariables, credentialsToSwapMap } from './executor/placeholder.js';
 
 // Approval Server
 export type { ApprovalResult } from './server/approval-server.js';
+export { requestBrowserApproval } from './server/approval-server.js';
 
 // Setup Server
 export type { SetupResult } from './server/setup-server.js';
+export { requestBrowserSetup } from './server/setup-server.js';
+
+// Dashboard Server
+export { startServer as startDashboardServer } from './server/index.js';
+
+// Browser & Prompt Utilities
+export { openBrowser } from './utils/open-browser.js';
+export { promptInput, promptPassphrase, promptConfirm, promptPassphraseSafe } from './utils/prompt.js';
 
 // AgentPay
 export { AgentPay } from './agentpay.js';

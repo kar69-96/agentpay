@@ -1,7 +1,9 @@
-import { formatCurrency } from '../utils/display.js';
-import { BudgetManager } from '../budget/budget.js';
-import { TransactionManager } from '../transactions/manager.js';
-import { AuditLogger } from '../audit/logger.js';
+import {
+  BudgetManager,
+  TransactionManager,
+  AuditLogger,
+  formatCurrency,
+} from '@useagentpay/sdk';
 
 interface ProposeOptions {
   merchant: string;

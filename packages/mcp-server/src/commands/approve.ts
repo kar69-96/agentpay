@@ -1,6 +1,9 @@
-import { TransactionManager } from '../transactions/manager.js';
-import { AuditLogger } from '../audit/logger.js';
-import { formatCurrency } from '../utils/display.js';
+import {
+  TransactionManager,
+  AuditLogger,
+  formatCurrency,
+  requestBrowserApproval,
+} from '@useagentpay/sdk';
 
 export async function approveCommand(txId: string): Promise<void> {
   const tm = new TransactionManager();
@@ -22,7 +25,6 @@ export async function approveCommand(txId: string): Promise<void> {
   console.log(`  Description: ${tx.description}`);
   console.log();
 
-  const { requestBrowserApproval } = await import('../server/approval-server.js');
   const result = await requestBrowserApproval(tx, tm, audit);
 
   if (result.action === 'rejected') {

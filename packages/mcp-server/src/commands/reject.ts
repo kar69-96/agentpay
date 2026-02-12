@@ -1,5 +1,4 @@
-import { TransactionManager } from '../transactions/manager.js';
-import { AuditLogger } from '../audit/logger.js';
+import { TransactionManager, AuditLogger } from '@useagentpay/sdk';
 
 export function rejectCommand(txId: string, options: { reason?: string }): void {
   const tm = new TransactionManager();

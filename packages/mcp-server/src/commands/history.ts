@@ -1,5 +1,4 @@
-import { TransactionManager } from '../transactions/manager.js';
-import { formatCurrency, formatTimestamp } from '../utils/display.js';
+import { TransactionManager, formatCurrency, formatTimestamp } from '@useagentpay/sdk';
 
 export function historyCommand(): void {
   const tm = new TransactionManager();
