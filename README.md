@@ -10,14 +10,16 @@ Everything runs on the user's machine — local Chromium via Playwright, local e
 ## Install
 
 ```bash
-npm install @useagentpay/sdk
+npm install -g @useagentpay/sdk
 ```
+
+Requires Node.js 20+. This gives you the `agentpay` CLI command.
 
 ## Quick Start
 
 **Human — set up credentials:**
 ```bash
-agentpay setup       # encrypt & store billing credentials locally
+agentpay setup       # opens browser form to encrypt & store billing credentials
 agentpay budget --set 200
 ```
 
