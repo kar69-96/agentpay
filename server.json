@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.kar69-96/agentpay",
+  "description": "AI agent payments with human approval. Local-first, encrypted credentials, budget controls.",
+  "repository": {
+    "url": "https://github.com/kar69-96/useagentpay",
+    "source": "github"
+  },
+  "version": "0.1.8",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@useagentpay/mcp-server",
+      "version": "0.1.8",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Passphrase for decrypting credentials during purchase execution",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "AGENTPAY_PASSPHRASE"
+        },
+        {
+          "description": "Anthropic API key for browser navigation during checkout",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "ANTHROPIC_API_KEY"
+        }
+      ]
+    }
+  ]
+}
