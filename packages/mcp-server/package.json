@@ -1,6 +1,6 @@
 {
   "name": "@useagentpay/mcp-server",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "mcpName": "io.github.kar69-96/agentpay",
   "description": "MCP server that lets AI agents make purchases with human approval. Local-first payments, encrypted credentials, budget controls.",
   "keywords": [
@@ -13,10 +13,22 @@
     "agentic-commerce",
     "agent-checkout",
     "payments",
+    "checkout",
     "wallet",
     "claude",
     "cursor",
-    "windsurf"
+    "windsurf",
+    "claude-code",
+    "claude-desktop",
+    "local-first",
+    "encrypted",
+    "human-approval",
+    "budget-controls",
+    "ed25519",
+    "ap2",
+    "purchase",
+    "headless-browser",
+    "open-source"
   ],
   "homepage": "https://useagentpay.com",
   "repository": {

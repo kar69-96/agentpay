@@ -1,34 +1,36 @@
 {
-  "$schema": "https://registry.modelcontextprotocol.io/schemas/server.json",
-  "name": "agentpay",
-  "description": "AI agent payments with human approval. Propose purchases, get approval via dashboard or mobile, execute checkout — all over MCP.",
-  "repository": "https://github.com/kar69-96/useagentpay",
-  "homepage": "https://useagentpay.com",
-  "packages": {
-    "npm": "@useagentpay/mcp-server"
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.kar69-96/agentpay",
+  "description": "AI agent payments with human approval. Local-first, encrypted credentials, budget controls.",
+  "repository": {
+    "url": "https://github.com/kar69-96/useagentpay",
+    "source": "github"
   },
-  "tools": [
-    { "name": "agentpay_status", "description": "Check setup state, balance, budget, and mobile mode" },
-    { "name": "agentpay_check_balance", "description": "Current balance and per-transaction limits" },
-    { "name": "agentpay_propose_purchase", "description": "Propose a purchase for human approval" },
-    { "name": "agentpay_request_mobile_approval", "description": "Send approval link to user's phone via Cloudflare Tunnel" },
-    { "name": "agentpay_wait_for_approval", "description": "Poll until human approves or rejects" },
-    { "name": "agentpay_execute_purchase", "description": "Execute an approved purchase via headless browser" },
-    { "name": "agentpay_get_receipt", "description": "Get receipt for a completed purchase" },
-    { "name": "agentpay_list_pending", "description": "List pending purchase proposals" },
-    { "name": "agentpay_get_transaction", "description": "Get transaction details by ID" }
-  ],
-  "resources": [
-    { "name": "wallet", "description": "Wallet balance and spending limits" },
-    { "name": "transaction", "description": "Transaction details by ID" },
-    { "name": "audit-log", "description": "Recent audit log entries" }
-  ],
-  "prompts": [
-    { "name": "buy", "description": "Guided step-by-step purchase flow" },
-    { "name": "budget-check", "description": "Balance and pending transaction summary" },
-    { "name": "purchase-status", "description": "Recent transaction history" }
-  ],
-  "install": {
-    "npm": "npx -p @useagentpay/mcp-server agentpay serve"
-  }
+  "version": "0.1.8",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@useagentpay/mcp-server",
+      "version": "0.1.8",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Passphrase for decrypting credentials during purchase execution",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "AGENTPAY_PASSPHRASE"
+        },
+        {
+          "description": "Anthropic API key for browser navigation during checkout",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "ANTHROPIC_API_KEY"
+        }
+      ]
+    }
+  ]
 }

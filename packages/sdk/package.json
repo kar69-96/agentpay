@@ -1,15 +1,25 @@
 {
   "name": "@useagentpay/sdk",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Local-first payments SDK for AI agents. Encrypted credentials, budget controls, signed purchase mandates.",
   "keywords": [
     "ai-agent",
     "agent-payments",
+    "ai-payments",
+    "agentic-commerce",
     "payments",
     "checkout",
     "mcp",
+    "model-context-protocol",
     "encrypted",
-    "local-first"
+    "local-first",
+    "wallet",
+    "budget-controls",
+    "human-approval",
+    "ed25519",
+    "ap2",
+    "purchase",
+    "headless-browser"
   ],
   "homepage": "https://useagentpay.com",
   "repository": {

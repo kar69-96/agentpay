@@ -1,0 +1,42 @@
+# AgentPay
+
+> Open-source MCP server for AI agent payments. Local-first, human-approved checkout with encrypted credentials and budget controls. Works with Claude Desktop, Cursor, Claude Code, Windsurf, and any MCP-compatible host.
+
+## What AgentPay Does
+
+AgentPay lets AI agents make purchases on the web with human approval. Credentials are encrypted locally (AES-256-GCM), every purchase requires a cryptographically signed mandate from a human, and checkout happens via headless Chromium with placeholder injection — the agent never sees card details.
+
+## Install
+
+- npm package: `@useagentpay/mcp-server`
+- Install: `npx -p @useagentpay/mcp-server agentpay init`
+- MCP config: `{ "mcpServers": { "agentpay": { "command": "npx", "args": ["-p", "@useagentpay/mcp-server", "agentpay", "serve"] } } }`
+
+## MCP Tools
+
+- `agentpay_status` — check setup state, balance, budget
+- `agentpay_check_balance` — current balance and limits
+- `agentpay_propose_purchase` — propose a purchase (merchant, amount, description, url)
+- `agentpay_wait_for_approval` — wait for human approval
+- `agentpay_execute_purchase` — execute approved purchase via headless browser
+- `agentpay_get_receipt` — get receipt after purchase
+- `agentpay_list_pending` — list pending proposals
+- `agentpay_get_transaction` — get transaction details
+- `agentpay_request_mobile_approval` — send approval link to phone via Cloudflare Tunnel
+
+## Key Features
+
+- Local-first: all data stored on the user's machine, no cloud dependency
+- Encrypted credentials: AES-256-GCM vault, passphrase-protected
+- Human approval: Ed25519 signed purchase mandates (inspired by Google AP2)
+- Budget controls: per-transaction and daily spending limits
+- Placeholder injection: forms show `{{card_number}}` until submission instant
+- Mobile approval: approve purchases from phone via Cloudflare Quick Tunnel
+- Open source: MIT license, fully auditable
+
+## Links
+
+- [GitHub](https://github.com/kar69-96/useagentpay)
+- [npm](https://www.npmjs.com/package/@useagentpay/mcp-server)
+- [Website](https://useagentpay.com)
+- [MCP Registry](https://registry.modelcontextprotocol.io)

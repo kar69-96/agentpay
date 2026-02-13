@@ -11,7 +11,7 @@ screenshot-*.png
 .claude/
 plans/
 docs/PLAN.md
-glama.json
+
 
 # Browserbase provider (optional, not part of open-source repo)
 packages/sdk/src/executor/providers/browserbase-provider.ts
