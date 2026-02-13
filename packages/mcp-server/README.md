@@ -2,13 +2,13 @@
 
 MCP server for [AgentPay](https://github.com/kar69-96/useagentpay) — exposes the full payment lifecycle to any MCP-compatible AI host (Claude Desktop, Cursor, Claude Code, Windsurf).
 
-8 tools, 3 resources, 3 prompts. Agents can propose purchases, wait for human approval, execute checkout, and retrieve receipts — all over the Model Context Protocol.
+9 tools, 3 resources, 3 prompts. Agents can propose purchases, wait for human approval, execute checkout, and retrieve receipts — all over the Model Context Protocol.
 
 ## Install & Setup
 
 ```bash
-npx agentpay init     # creates agentpay/ folder with AGENT.md
-npx agentpay setup    # opens browser to enter card, set budget & limits
+npx -p @useagentpay/mcp-server agentpay init     # creates agentpay/ folder with AGENT.md
+npx -p @useagentpay/mcp-server agentpay setup    # opens browser to enter card, set budget & limits
 ```
 
 ## Host Configuration
@@ -42,14 +42,39 @@ Add to your Claude Desktop, Cursor, or Claude Code config:
 }
 ```
 
+## Mobile Mode
+
+Enable mobile mode to approve purchases from your phone via Cloudflare Tunnel. No Cloudflare account needed — requires `cloudflared` installed on the system.
+
+```bash
+# Enable mobile mode
+npx -p @useagentpay/mcp-server agentpay mobile on
+
+# With notification (how the approval link reaches your phone)
+npx -p @useagentpay/mcp-server agentpay mobile on --notify-command "your-send-command {{url}}"
+npx -p @useagentpay/mcp-server agentpay mobile on --notify-webhook "https://hooks.example.com/notify"
+
+# Disable mobile mode
+npx -p @useagentpay/mcp-server agentpay mobile off
+```
+
+When mobile mode is on, agents call `agentpay_request_mobile_approval` instead of opening the local dashboard. This starts a Cloudflare Quick Tunnel and sends a temporary HTTPS approval link to the configured notification endpoint.
+
+### Install cloudflared
+
+- **macOS:** `brew install cloudflared`
+- **Linux:** [Download](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)
+- **Windows:** `winget install Cloudflare.cloudflared`
+
 ## Tools
 
 | Tool | Description |
 |------|-------------|
-| `agentpay_status` | Check if setup is complete, balance, budget, pending count |
+| `agentpay_status` | Check setup state, balance, budget, mobileMode, pending count |
 | `agentpay_check_balance` | Current balance and limits (call before proposing) |
 | `agentpay_list_pending` | Pending transactions awaiting approval |
 | `agentpay_propose_purchase` | Propose a new purchase (merchant, amount, description, url) |
+| `agentpay_request_mobile_approval` | Tunnel a secure approval link to the user's phone |
 | `agentpay_get_transaction` | Get transaction details by ID |
 | `agentpay_wait_for_approval` | Long-poll until approved or rejected |
 | `agentpay_execute_purchase` | Execute an approved purchase (requires passphrase config) |
@@ -74,12 +99,14 @@ Add to your Claude Desktop, Cursor, or Claude Code config:
 ## Typical Agent Flow
 
 ```
-1. agentpay_status          → verify setup is complete
-2. agentpay_check_balance   → confirm budget for purchase
-3. agentpay_propose_purchase → create pending transaction
-4. agentpay_wait_for_approval → wait for human to approve
-5. agentpay_execute_purchase → run checkout via headless browser
-6. agentpay_get_receipt      → retrieve confirmation
+1. agentpay_status                    → verify setup, check mobileMode
+2. agentpay_check_balance             → confirm budget for purchase
+3. agentpay_propose_purchase          → create pending transaction
+4. agentpay_request_mobile_approval   → (if mobileMode: true) send link to phone
+   OR open dashboard                  → (if mobileMode: false) open browser
+5. agentpay_wait_for_approval         → wait for human to approve
+6. agentpay_execute_purchase          → run checkout via headless browser
+7. agentpay_get_receipt               → retrieve confirmation
 ```
 
 ## Passphrase Modes
@@ -98,6 +125,8 @@ The `execute_purchase` tool needs access to the vault passphrase. Three modes:
 |----------|---------|---------|
 | `AGENTPAY_PASSPHRASE` | Passphrase for execute (env mode) | — |
 | `AGENTPAY_PASSPHRASE_SERVER` | URL to fetch passphrase (server mode) | — |
+| `AGENTPAY_NOTIFY_COMMAND` | Override notify command for mobile mode | — |
+| `AGENTPAY_NOTIFY_WEBHOOK` | Override notify webhook for mobile mode | — |
 | `ANTHROPIC_API_KEY` | LLM API key for browser navigation | — |
 | `AGENTPAY_HOME` | Override data directory | `./agentpay` |
 | `MCP_TRANSPORT` | Set to `http` for HTTP transport | `stdio` |

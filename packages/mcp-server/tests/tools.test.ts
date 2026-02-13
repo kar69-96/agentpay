@@ -49,10 +49,10 @@ describe('MCP Tools', () => {
     home = setupTestHome();
   });
 
-  it('lists all 8 tools', async () => {
+  it('lists all 9 tools', async () => {
     const { client } = await createTestClient(home);
     const result = await client.listTools();
-    expect(result.tools).toHaveLength(8);
+    expect(result.tools).toHaveLength(9);
 
     const names = result.tools.map((t) => t.name).sort();
     expect(names).toEqual([
@@ -62,6 +62,7 @@ describe('MCP Tools', () => {
       'agentpay_get_transaction',
       'agentpay_list_pending',
       'agentpay_propose_purchase',
+      'agentpay_request_mobile_approval',
       'agentpay_status',
       'agentpay_wait_for_approval',
     ]);

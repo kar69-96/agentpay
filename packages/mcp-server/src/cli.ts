@@ -105,6 +105,16 @@ program
   });
 
 program
+  .command('mobile <on|off>')
+  .description('Enable or disable mobile approval mode (Cloudflare Tunnel)')
+  .option('--notify-command <cmd>', 'Shell command to send notification ({{url}} = approval link)')
+  .option('--notify-webhook <url>', 'Webhook URL to POST approval payload to')
+  .action(async (mode: string, options: { notifyCommand?: string; notifyWebhook?: string }) => {
+    const { mobileCommand } = await import('./commands/mobile.js');
+    mobileCommand(mode, options);
+  });
+
+program
   .command('serve')
   .description('Start AgentPay MCP server')
   .option('--http', 'Use HTTP transport instead of stdio')

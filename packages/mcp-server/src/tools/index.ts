@@ -6,6 +6,7 @@ import { registerProposeTool } from './propose.js';
 import { registerTransactionTools } from './transactions.js';
 import { registerExecuteTool } from './execute.js';
 import { registerReceiptTool } from './receipt.js';
+import { registerMobileApproveTool } from './mobile-approve.js';
 
 export function registerTools(server: McpServer, ap: AgentPay, config: ServerConfig) {
   registerStatusTools(server, ap);
@@ -13,4 +14,5 @@ export function registerTools(server: McpServer, ap: AgentPay, config: ServerCon
   registerTransactionTools(server, ap);
   registerExecuteTool(server, ap, config);
   registerReceiptTool(server, ap);
+  registerMobileApproveTool(server, ap);
 }

@@ -13,6 +13,7 @@ describe('AGENT.md template', () => {
       'agentpay_status',
       'agentpay_check_balance',
       'agentpay_propose_purchase',
+      'agentpay_request_mobile_approval',
       'agentpay_wait_for_approval',
       'agentpay_execute_purchase',
       'agentpay_get_receipt',
@@ -27,6 +28,14 @@ describe('AGENT.md template', () => {
   it('includes CLI commands for humans', () => {
     expect(content).toContain('npx -p @useagentpay/mcp-server agentpay setup');
     expect(content).toContain('npx -p @useagentpay/mcp-server agentpay dashboard');
+    expect(content).toContain('npx -p @useagentpay/mcp-server agentpay mobile on');
+    expect(content).toContain('npx -p @useagentpay/mcp-server agentpay mobile off');
+  });
+
+  it('includes mobile mode section', () => {
+    expect(content).toContain('## Mobile Mode');
+    expect(content).toContain('mobileMode');
+    expect(content).toContain('Cloudflare Tunnel');
   });
 
   it('includes dashboard-only configuration section', () => {
