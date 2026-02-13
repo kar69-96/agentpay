@@ -1,7 +1,22 @@
 {
   "name": "@useagentpay/sdk",
   "version": "0.1.2",
-  "description": "Local-first payments SDK for AI agents",
+  "description": "Local-first payments SDK for AI agents. Encrypted credentials, budget controls, signed purchase mandates.",
+  "keywords": [
+    "ai-agent",
+    "agent-payments",
+    "payments",
+    "checkout",
+    "mcp",
+    "encrypted",
+    "local-first"
+  ],
+  "homepage": "https://useagentpay.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kar69-96/useagentpay",
+    "directory": "packages/sdk"
+  },
   "type": "module",
   "exports": {
     ".": {

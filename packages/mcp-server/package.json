@@ -2,7 +2,28 @@
   "name": "@useagentpay/mcp-server",
   "version": "0.1.7",
   "mcpName": "io.github.kar69-96/agentpay",
-  "description": "MCP server for AgentPay – exposes payment tools to AI agents",
+  "description": "MCP server that lets AI agents make purchases with human approval. Local-first payments, encrypted credentials, budget controls.",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "ai-agent",
+    "agent-payments",
+    "ai-payments",
+    "agentic-commerce",
+    "agent-checkout",
+    "payments",
+    "wallet",
+    "claude",
+    "cursor",
+    "windsurf"
+  ],
+  "homepage": "https://useagentpay.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kar69-96/useagentpay",
+    "directory": "packages/mcp-server"
+  },
   "type": "module",
   "exports": {
     ".": {
