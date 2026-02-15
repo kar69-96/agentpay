@@ -211,6 +211,7 @@ export function createSetupServer(
           // Audit
           const audit = new AuditLogger(join(home, 'audit.log'));
           audit.log('SETUP', { message: 'credentials encrypted, keypair generated, wallet initialized', source: 'browser-setup' });
+
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Setup failed';
           sendJson(res, 500, { error: msg });

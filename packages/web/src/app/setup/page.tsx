@@ -21,10 +21,20 @@ function SetupContent() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-8">
       <div className="w-full max-w-lg">
-        <h1 className="text-3xl font-bold text-center mb-2">AgentPay Setup</h1>
-        <p className="text-gray-500 text-center mb-8">
-          Your credentials are encrypted locally in your browser. They never leave your device.
-        </p>
+        <div className="text-center mb-10 space-y-2">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400">
+              <rect x="2" y="6" width="20" height="14" rx="2" />
+              <path d="M2 10h20" />
+              <path d="M16 14h2" />
+            </svg>
+            <span className="font-medium text-gray-400">agentpay</span>
+          </div>
+          <h1 className="text-3xl font-semibold">Set Up Your Wallet</h1>
+          <p className="text-gray-500 text-sm">
+            Your credentials are encrypted locally. They never leave your device.
+          </p>
+        </div>
         <SetupForm initialBudget={budget} onComplete={setSetupData} />
       </div>
     </main>
@@ -33,7 +43,7 @@ function SetupContent() {
 
 export default function SetupPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-500">Loading...</div>}>
       <SetupContent />
     </Suspense>
   );
