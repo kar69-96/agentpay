@@ -37,6 +37,10 @@ export { createMandate, verifyMandate } from './auth/mandate.js';
 // Budget
 export { BudgetManager } from './budget/budget.js';
 
+// Config
+export type { AgentPayConfig } from './config/types.js';
+export { loadConfig, saveConfig, setMobileMode } from './config/config.js';
+
 // Transactions
 export { TransactionManager } from './transactions/manager.js';
 export { waitForApproval } from './transactions/poller.js';
@@ -51,6 +55,18 @@ export { PLACEHOLDER_MAP, getPlaceholderVariables, credentialsToSwapMap } from '
 // Approval Server
 export type { ApprovalResult } from './server/approval-server.js';
 export { requestBrowserApproval } from './server/approval-server.js';
+
+// Mobile Approval Server
+export type { MobileApprovalOptions, MobileApprovalResult } from './server/mobile-approval-server.js';
+export { requestMobileApproval } from './server/mobile-approval-server.js';
+
+// Tunnel
+export type { TunnelHandle } from './tunnel/tunnel.js';
+export { openTunnel } from './tunnel/tunnel.js';
+
+// Notifications
+export type { NotifyOptions, NotifyPayload } from './notify/notify.js';
+export { sendNotification } from './notify/notify.js';
 
 // Setup Server
 export type { SetupResult } from './server/setup-server.js';

@@ -1,34 +1,9 @@
-export type StepName =
-  | 'init'
-  | 'navigate'
-  | 'pre-steps'
-  | 'product-selection'
-  | 'cart-population'
-  | 'checkout-navigation'
-  | 'form-fill'
-  | 'confirmation-extraction';
-
-export interface StepResult {
-  step: StepName;
-  success: boolean;
-  durationMs: number;
-  error?: string;
-  screenshotPath?: string;
-  pageUrl?: string;
-}
-
 export interface ScenarioResult {
   scenarioName: string;
-  score: number;
-  completed: boolean;
-  steps: StepResult[];
-  totalDurationMs: number;
-}
-
-export function computeScore(steps: StepResult[]): number {
-  if (steps.length === 0) return 0;
-  const passed = steps.filter((s) => s.success).length;
-  return Math.round((passed / steps.length) * 100) / 100;
+  passed: boolean;
+  result: string | null;
+  durationMs: number;
+  error?: string;
 }
 
 export function formatReport(results: ScenarioResult[]): string {
@@ -40,28 +15,22 @@ export function formatReport(results: ScenarioResult[]): string {
   lines.push('');
 
   for (const r of results) {
-    const icon = r.completed ? 'PASS' : 'FAIL';
-    lines.push(`[${icon}] ${r.scenarioName}  —  score: ${r.score}  (${formatMs(r.totalDurationMs)})`);
-
-    for (const s of r.steps) {
-      const stepIcon = s.success ? '+' : 'x';
-      const durStr = formatMs(s.durationMs);
-      let line = `  [${stepIcon}] ${s.step.padEnd(24)} ${durStr}`;
-      if (s.error) line += `  ERR: ${s.error.slice(0, 80)}`;
-      lines.push(line);
+    const icon = r.passed ? 'PASS' : 'FAIL';
+    lines.push(`[${icon}] ${r.scenarioName}  (${formatMs(r.durationMs)})`);
+    if (r.result) {
+      lines.push(`  Result: ${r.result.slice(0, 200)}`);
+    }
+    if (r.error) {
+      lines.push(`  Error: ${r.error.slice(0, 200)}`);
     }
     lines.push('');
   }
 
   const total = results.length;
-  const passed = results.filter((r) => r.completed).length;
-  const avgScore =
-    results.length > 0
-      ? Math.round((results.reduce((sum, r) => sum + r.score, 0) / total) * 100) / 100
-      : 0;
+  const passed = results.filter((r) => r.passed).length;
 
   lines.push('-'.repeat(60));
-  lines.push(`  ${passed}/${total} scenarios fully completed   avg score: ${avgScore}`);
+  lines.push(`  ${passed}/${total} scenarios passed`);
   lines.push('-'.repeat(60));
   lines.push('');
 

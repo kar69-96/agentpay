@@ -16,6 +16,11 @@ export function registerProposeTool(server: McpServer, ap: AgentPay) {
     async ({ merchant, amount, description, url }) => {
       try {
         const tx = ap.transactions.propose({ merchant, amount, description, url });
+        const { mobileMode } = ap.status();
+
+        const nextAction = mobileMode
+          ? `Purchase proposed. Mobile mode is ON — call agentpay_request_mobile_approval with txId "${tx.id}" to send approval link to the user's phone. Then call agentpay_wait_for_approval.`
+          : `Purchase proposed. Open the dashboard for the human to approve: npx -p @useagentpay/mcp-server agentpay dashboard — then call agentpay_wait_for_approval with txId "${tx.id}".`;
 
         return {
           content: [
@@ -27,7 +32,8 @@ export function registerProposeTool(server: McpServer, ap: AgentPay) {
                 status: tx.status,
                 merchant: tx.merchant,
                 amount: tx.amount,
-                nextAction: `Purchase proposed. Open the dashboard for the human to approve: npx -p @useagentpay/mcp-server agentpay dashboard — then call agentpay_wait_for_approval with txId "${tx.id}".`,
+                mobileMode,
+                nextAction,
               }),
             },
           ],

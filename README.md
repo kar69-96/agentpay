@@ -1,13 +1,13 @@
 # AgentPay
 
-> Secure, local-first payments for AI agents.
+> Payments for AI agents. Local-first, human-approved, encrypted.
 
-AgentPay lets AI agents purchase things on the web without ever seeing a user's credit card. Credentials are encrypted locally, purchases require human approval with cryptographic signatures, and checkout happens via headless browser with placeholder injection — real values exist in the DOM for milliseconds.
+AgentPay is an open-source MCP server that gives AI agents the ability to make purchases on the web — without ever seeing a user's credit card. Credentials are encrypted locally, every purchase requires human approval with cryptographic signatures, and checkout happens via headless browser with placeholder injection.
 
-Everything runs on the user's machine — local Chromium via Playwright, local encryption, local keys.
+Works with Claude Desktop, Cursor, Claude Code, Windsurf, and any MCP-compatible host.
 
 350+ package downloads and counting!
-https://useagentpay-landing.vercel.app
+https://useagentpay.com
 
 ## Install
 
@@ -54,13 +54,14 @@ The agent reads `agentpay/AGENT.md` for instructions on how to propose purchases
 
 ## MCP Server
 
-8 tools, 3 resources, 3 prompts — covers the full purchase lifecycle.
+9 tools, 3 resources, 3 prompts — covers the full purchase lifecycle.
 
 | Tool | Description |
 |------|-------------|
 | `agentpay_status` | Check setup state, balance, budget |
 | `agentpay_check_balance` | Current balance + limits |
 | `agentpay_propose_purchase` | Propose a purchase |
+| `agentpay_request_mobile_approval` | Send approval link to user's phone |
 | `agentpay_wait_for_approval` | Wait for human approval |
 | `agentpay_execute_purchase` | Execute approved purchase |
 | `agentpay_get_receipt` | Get receipt |

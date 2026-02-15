@@ -67,7 +67,8 @@ describe('PurchaseExecutor', () => {
   it('accepts a custom browser provider', async () => {
     const { PurchaseExecutor } = await import('./executor.js');
     const mockProvider: BrowserProvider = {
-      createStagehand: vi.fn(),
+      createSession: vi.fn(),
+      createLLM: vi.fn(),
       close: vi.fn(),
     };
     const executor = new PurchaseExecutor({ provider: mockProvider });

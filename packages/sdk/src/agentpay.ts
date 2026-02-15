@@ -15,6 +15,10 @@ import {
 import type { Transaction, Receipt, ProposeOptions } from './transactions/types.js';
 import type { TransactionDetails } from './auth/types.js';
 import type { ExecutorConfig } from './executor/types.js';
+import type { NotifyOptions } from './notify/notify.js';
+import type { MobileApprovalResult } from './server/mobile-approval-server.js';
+import { loadConfig, saveConfig, setMobileMode } from './config/config.js';
+import type { AgentPayConfig } from './config/types.js';
 
 export interface AgentPayOptions {
   home?: string;
@@ -51,6 +55,14 @@ export class AgentPay {
     };
   }
 
+  get config() {
+    return {
+      get: (): AgentPayConfig => loadConfig(this.home),
+      setMobileMode: (enabled: boolean): AgentPayConfig => setMobileMode(enabled, this.home),
+      save: (config: AgentPayConfig): void => saveConfig(config, this.home),
+    };
+  }
+
   get transactions() {
     return {
       propose: (options: ProposeOptions): Transaction => {
@@ -78,6 +90,23 @@ export class AgentPay {
 
         const { requestBrowserApproval } = await import('./server/approval-server.js');
         return requestBrowserApproval(tx, this.txManager, this.auditLogger, this.home);
+      },
+      requestMobileApproval: async (txId: string, notify: NotifyOptions): Promise<MobileApprovalResult> => {
+        const tx = this.txManager.get(txId);
+        if (!tx) throw new Error(`Transaction ${txId} not found.`);
+        if (tx.status !== 'pending') throw new Error(`Transaction ${txId} is not pending.`);
+
+        const { existsSync } = await import('node:fs');
+        const keyPath = join(this.home, 'keys', 'private.pem');
+        if (!existsSync(keyPath)) {
+          throw new Error('Private key not found. Run "agentpay setup" first.');
+        }
+
+        const { requestMobileApproval } = await import('./server/mobile-approval-server.js');
+        return requestMobileApproval(tx, this.txManager, this.auditLogger, {
+          notify,
+          home: this.home,
+        });
       },
       execute: async (txId: string): Promise<Receipt> => {
         const tx = this.txManager.get(txId);
@@ -163,7 +192,9 @@ export class AgentPay {
     pending: Transaction[];
     recent: Transaction[];
     isSetup: boolean;
+    mobileMode: boolean;
   } {
+    const cfg = loadConfig(this.home);
     try {
       const wallet = this.budgetManager.getBalance();
       const pending = this.txManager.getPending();
@@ -175,6 +206,7 @@ export class AgentPay {
         pending,
         recent,
         isSetup: true,
+        mobileMode: cfg.mobileMode,
       };
     } catch {
       return {
@@ -184,6 +216,7 @@ export class AgentPay {
         pending: [],
         recent: [],
         isSetup: false,
+        mobileMode: cfg.mobileMode,
       };
     }
   }

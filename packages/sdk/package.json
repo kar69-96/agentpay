@@ -51,7 +51,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@browserbasehq/stagehand": "^3.0.8",
+    "browser-use": "^0.3.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

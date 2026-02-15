@@ -1,174 +1,65 @@
-import type { CheckoutProvider } from './provider.js';
+import { Agent, BrowserSession, BrowserProfile } from 'browser-use';
+import { ChatAnthropic } from 'browser-use/llm/anthropic';
 import type { CheckoutScenario } from './scenarios.js';
-import type { StepName, StepResult, ScenarioResult } from './scoring.js';
-import { computeScore } from './scoring.js';
+import type { ScenarioResult } from './scoring.js';
 
-async function runStep(
-  name: StepName,
-  fn: () => Promise<void>,
-  provider: CheckoutProvider,
-): Promise<StepResult> {
+export async function runScenario(scenario: CheckoutScenario): Promise<ScenarioResult> {
   const start = Date.now();
+
+  const session = new BrowserSession({
+    browser_profile: new BrowserProfile({
+      headless: process.env.HEADLESS !== 'false',
+    }),
+  });
+
+  const llm = new ChatAnthropic({
+    model: 'claude-sonnet-4-20250514',
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+  });
+
   try {
-    await fn();
+    const agent = new Agent({
+      task: scenario.task,
+      llm,
+      browser_session: session,
+      use_vision: true,
+      max_actions_per_step: 4,
+      max_failures: 3,
+      available_file_paths: [],  // Disable file system to prevent wasted steps on todo.md
+      extend_system_message: 'Do NOT create any files. Focus only on browser actions.',
+    });
+
+    const history = await agent.run(scenario.maxSteps);
+    const result = history.final_result();
+    const success = history.is_successful();
+
+    // Check if result contains any success indicators
+    const resultLower = (result || '').toLowerCase();
+    const hasIndicator = scenario.successIndicators.some((ind) =>
+      resultLower.includes(ind.toLowerCase()),
+    );
+
+    const passed = (success ?? false) || hasIndicator;
+
     return {
-      step: name,
-      success: true,
+      scenarioName: scenario.name,
+      passed,
+      result,
       durationMs: Date.now() - start,
-      pageUrl: safeUrl(provider),
     };
   } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : String(err);
-    let screenshotPath: string | undefined;
-    try {
-      // Attempt screenshot on failure for debugging
-      const buf = await provider.page().screenshot();
-      screenshotPath = `screenshot-${name}-${Date.now()}.png`;
-      const { writeFileSync } = await import('node:fs');
-      writeFileSync(screenshotPath, buf);
-    } catch {
-      // Screenshot may fail if browser crashed
-    }
     return {
-      step: name,
-      success: false,
+      scenarioName: scenario.name,
+      passed: false,
+      result: null,
       durationMs: Date.now() - start,
-      error: errorMsg,
-      screenshotPath,
-      pageUrl: safeUrl(provider),
+      error: err instanceof Error ? err.message : String(err),
     };
-  }
-}
-
-function safeUrl(provider: CheckoutProvider): string | undefined {
-  try {
-    return provider.page().url();
-  } catch {
-    return undefined;
-  }
-}
-
-export async function runScenario(
-  provider: CheckoutProvider,
-  scenario: CheckoutScenario,
-): Promise<ScenarioResult> {
-  const steps: StepResult[] = [];
-  const overallStart = Date.now();
-
-  const isCritical = (step: StepName) => scenario.criticalSteps.includes(step);
-
-  const addStep = async (name: StepName, fn: () => Promise<void>): Promise<boolean> => {
-    const result = await runStep(name, fn, provider);
-    steps.push(result);
-    if (!result.success && isCritical(name)) return false;
-    return true;
-  };
-
-  try {
-    // 1. Init
-    if (!(await addStep('init', () => provider.init()))) {
-      return finish(scenario.name, steps, overallStart);
-    }
-
-    // 2. Navigate
-    if (
-      !(await addStep('navigate', async () => {
-        await provider.page().goto(scenario.url);
-        await provider.page().waitForTimeout(2000);
-      }))
-    ) {
-      return finish(scenario.name, steps, overallStart);
-    }
-
-    // 3. Pre-steps (login, etc.)
-    if (scenario.preSteps && scenario.preSteps.length > 0) {
-      if (
-        !(await addStep('pre-steps', async () => {
-          for (const step of scenario.preSteps!) {
-            const result = await provider.act(step.instruction, {
-              variables: step.variables,
-            });
-            if (!result.success) throw new Error(result.message);
-            await provider.page().waitForTimeout(1500);
-          }
-        }))
-      ) {
-        return finish(scenario.name, steps, overallStart);
-      }
-    }
-
-    // 4. Product selection
-    if (
-      !(await addStep('product-selection', async () => {
-        const result = await provider.act(scenario.productSelection);
-        if (!result.success) throw new Error(result.message);
-        await provider.page().waitForTimeout(2000);
-      }))
-    ) {
-      if (isCritical('product-selection'))
-        return finish(scenario.name, steps, overallStart);
-    }
-
-    // 5. Cart population
-    if (
-      !(await addStep('cart-population', async () => {
-        const result = await provider.act(scenario.cartPopulation);
-        if (!result.success) throw new Error(result.message);
-        await provider.page().waitForTimeout(2000);
-      }))
-    ) {
-      if (isCritical('cart-population'))
-        return finish(scenario.name, steps, overallStart);
-    }
-
-    // 6. Checkout navigation
-    if (
-      !(await addStep('checkout-navigation', async () => {
-        const result = await provider.act(scenario.checkoutNavigation);
-        if (!result.success) throw new Error(result.message);
-        await provider.page().waitForTimeout(2000);
-      }))
-    ) {
-      if (isCritical('checkout-navigation'))
-        return finish(scenario.name, steps, overallStart);
-    }
-
-    // 7. Form fill
-    await addStep('form-fill', async () => {
-      const result = await provider.act(scenario.formFill.instruction, {
-        variables: scenario.formFill.variables,
-      });
-      if (!result.success) throw new Error(result.message);
-      await provider.page().waitForTimeout(3000);
-    });
-
-    // 8. Confirmation extraction
-    await addStep('confirmation-extraction', async () => {
-      const extracted = await provider.extract(scenario.confirmationExtract);
-      const hasConfirmation = Object.values(extracted).some(
-        (v) => v !== null && v !== undefined && v !== '' && v !== 'UNKNOWN',
-      );
-      if (!hasConfirmation) throw new Error('No confirmation data extracted');
-    });
   } finally {
-    await provider.close();
+    try {
+      await session.close();
+    } catch {
+      // Ignore cleanup errors
+    }
   }
-
-  return finish(scenario.name, steps, overallStart);
-}
-
-function finish(
-  scenarioName: string,
-  steps: StepResult[],
-  overallStart: number,
-): ScenarioResult {
-  const score = computeScore(steps);
-  const completed = steps.every((s) => s.success);
-  return {
-    scenarioName,
-    score,
-    completed,
-    steps,
-    totalDurationMs: Date.now() - overallStart,
-  };
 }
