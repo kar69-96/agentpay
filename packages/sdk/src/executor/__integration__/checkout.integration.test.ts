@@ -1,5 +1,4 @@
 import { describe, it, afterAll, expect } from 'vitest';
-import { StagehandProvider } from './stagehand-provider.js';
 import { scenarios } from './scenarios.js';
 import { runScenario } from './run-scenario.js';
 import { formatReport, type ScenarioResult } from './scoring.js';
@@ -19,17 +18,9 @@ describe.skipIf(!hasApiKey)('Checkout Integration Tests', () => {
     it(
       scenario.name,
       async () => {
-        const provider = new StagehandProvider();
-        const result = await runScenario(provider, scenario);
+        const result = await runScenario(scenario);
         allResults.push(result);
-
-        // Baseline: product selection must succeed
-        const productStep = result.steps.find(
-          (s) => s.step === 'product-selection',
-        );
-        if (productStep) {
-          expect(productStep.success).toBe(true);
-        }
+        expect(result.passed).toBe(true);
       },
       { timeout: scenario.timeoutMs + 30_000 },
     );

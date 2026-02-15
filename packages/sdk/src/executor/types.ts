@@ -9,7 +9,12 @@ export interface CheckoutResult {
 export interface ExecutorConfig {
   /** Custom browser provider. Defaults to LocalBrowserProvider (local Chromium). */
   provider?: BrowserProvider;
-  /** LLM API key for Stagehand's AI-driven navigation (e.g. ANTHROPIC_API_KEY). */
+  /** LLM API key for browser-use's AI-driven navigation. */
   modelApiKey?: string;
-  proxyUrl?: string;
+  /** Model name (e.g. 'claude-sonnet-4-20250514', 'gpt-4o', 'gemini-2.5-flash'). */
+  modelName?: string;
+  /** Run browser in headless mode. Defaults to true. */
+  headless?: boolean;
+  /** Max steps for the agent loop. Defaults to 30. */
+  maxSteps?: number;
 }
